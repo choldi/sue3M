@@ -6,5 +6,5 @@
 [node name="pink_piece" instance=ExtResource("1_d0jl4")]
 color = "pink"
 
-[node name="Sprite2D" parent="." index="0"]
+[node name="sprite" parent="." index="0"]
 texture = ExtResource("2_rrbrv")

@@ -1,11 +1,15 @@
 extends Node2D
 
+#state machine
+enum {wait,move}
+var state
 #Varibles para grid
 @export var width:int
 @export var height:int
 @export var x_start:int
 @export var y_start:int
 @export var offset:int
+@export var y_offset:int
 
 #pieces in board
 var all_pieces=[]
@@ -18,8 +22,15 @@ var first_touch=Vector2(0,0)
 var final_touch=Vector2(0,0)
 var controlling=false
 
+#swap back variables
+var piece_one = null
+var piece_two = null
+var last_place = Vector2(0,0)
+var last_direction = Vector2(0,0)
+
 #possible pieces to paint in board
 var possible_pieces=[
+	#preload("res://scenes/rainbow.tscn"),
 	preload("res://scenes/blue_piece.tscn"),
 	preload("res://scenes/green_piece.tscn"),
 	preload("res://scenes/light_green_piece.tscn"),
@@ -33,8 +44,8 @@ func _ready():
 	all_matches=make_2d_array()	
 	spawn_pieces()
 	print(all_pieces)
-	pass # Replace with function body.
-
+	state=move
+	
 func make_2d_array():
 	var array = []
 	for i in width:
@@ -59,10 +70,15 @@ func spawn_pieces():
 		for j in height:
 			var rand = floor(randf_range(0,possible_pieces.size()))
 			var piece = possible_pieces[rand].instantiate()
+			while check_line_column(i,j,piece.color)>=3 ||check_line_row(i,j,piece.color)>=3:
+					piece.queue_free()
+					rand = floor(randf_range(0,possible_pieces.size()))
+					piece = possible_pieces[rand].instantiate()
 			add_child(piece)
 			piece.position=grid_to_pixel(i,j)
 			all_pieces[i][j]=piece
-			
+	#queue_free()
+	
 func check_match_left(column,row,color,items,items_tot):
 	if column>0:
 		print("left")
@@ -71,6 +87,7 @@ func check_match_left(column,row,color,items,items_tot):
 			if all_matches[column-1][row]==null:
 				items+=1
 				all_matches[column-1][row]=color
+				all_pieces[column-1][row].match()
 				var up_check=check_match_up(column-1,row,color,0,0)
 				var down_check=check_match_down(column-1,row,color,0,0)
 				items_tot+=up_check[1]+down_check[1]+1
@@ -90,6 +107,7 @@ func check_match_right(column,row,color,items,items_tot):
 			if all_matches[column+1][row]==null:
 				items+=1
 				all_matches[column+1][row]=color
+				all_pieces[column+1][row].match()
 				var up_check=check_match_up(column+1,row,color,0,0)
 				var down_check=check_match_down(column+1,row,color,0,0)
 				items_tot+=up_check[1]+down_check[1]+1
@@ -109,6 +127,7 @@ func check_match_down(column,row,color,items,items_tot):
 			if all_matches[column][row-1]==null:
 				items+=1
 				all_matches[column][row-1]=color
+				all_pieces[column][row-1].match()
 				var left_check=check_match_left(column,row-1,color,0,0)
 				var right_check=check_match_right(column,row-1,color,0,0)
 				items_tot+=left_check[1]+right_check[1]+1
@@ -128,6 +147,7 @@ func check_match_up(column,row,color,items,items_tot):
 			if all_matches[column][row+1]==null:
 				items+=1
 				all_matches[column][row+1]=color
+				all_pieces[column][row+1].match()
 				var left_check=check_match_left(column,row+1,color,0,0)
 				var right_check=check_match_right(column,row+1,color,0,0)
 				items_tot+=left_check[1]+right_check[1]+1
@@ -141,28 +161,36 @@ func check_match_up(column,row,color,items,items_tot):
 
 func check_line_row(column,row,color):
 	var item=1
-	for i in range(column-1,0,-1):
-		if all_pieces[i][row].color==color:
+	var i=column-1
+	while i>-1:
+		if all_pieces[i][row]!=null &&  all_pieces[i][row].color==color:
 			item+=1
+			i=i-1
 		else:
 			break
-	for i in range(column+1,width-1):
-		if all_pieces[i][row].color==color:
+	i=column+1
+	while i<width:
+		if all_pieces[i][row]!=null &&  all_pieces[i][row].color==color:
 			item+=1
+			i=i+1
 		else:
 			break
 	return item
 	
 func check_line_column(column,row,color):
 	var item=1
-	for i in range(row-1,0,-1):
-		if all_pieces[column][i].color==color:
+	var i=row-1
+	while i>-1:
+		if all_pieces[column][i]!=null && all_pieces[column][i].color==color:
 			item+=1
+			i=i-1
 		else:
 			break
-	for i in range(row+1,height-1):
-		if all_pieces[column][i].color==color:
+	i=row+1
+	while i<height:
+		if all_pieces[column][i]!=null && all_pieces[column][i].color==color:
 			item+=1
+			i=i+1
 		else:
 			break
 	return item
@@ -177,6 +205,7 @@ func find_match(column,row):
 	print ("line items:" + str(items_lin_c))
 	if items_lin_r>=3 or items_lin_c>=3:		
 		all_matches[column][row]=color
+		all_pieces[column][row].match()
 		var left_check=check_match_left(column,row,color,0,0)
 		var right_check=check_match_right(column,row,color,0,0)
 		var up_check=check_match_up(column,row,color,0,0)
@@ -186,20 +215,30 @@ func find_match(column,row):
 		print ("up check:" + str(up_check))
 		print ("down check:" + str(down_check))
 		print(all_matches)
+		return true
+	else:
+		return false
 
 func search_match_grid():
+	var matched=false
 	all_matches=make_2d_array()
-	for i in range (1,width-1-1):
-		for j in range(1,height-1-1):
+	for i in range (0,width):
+		for j in range(0,height):
 			#var color=all_pieces[i][j].color
 #			var numelem_c=check_line_column(i,j,color)
 #			var numelem_r=check_line_row(i,j,color)
 #			if numelem_c>=3 or numelem_r>=3:
 			print (str(i)+"-"+str(j))
-			find_match(i,j)
+			if find_match(i,j):
+				matched=true
 	print(all_matches)
-			
-	pass
+	return matched
+
+func print_match_grid():
+	for i in range (width):
+		for j in range(height):
+			if all_matches[i][j]!=null:
+				all_pieces[i][j].match()
 
 func matches():
 	print("matches?")
@@ -211,13 +250,36 @@ func is_in_grid(column,row):
 	return false
 
 func swap_pieces(column,row,direction):
-	var first_piece=all_pieces[column][row]
-	var other_piece=all_pieces[column+direction.x][row+direction.y]
-	all_pieces[column][row]=other_piece
-	all_pieces[column+direction.x][row+direction.y]=first_piece
-	first_piece.position=grid_to_pixel(column+direction.x,row+direction.y)
-	other_piece.position=grid_to_pixel(column,row)
+	var first_piece = all_pieces[column][row]
+	var other_piece = all_pieces[column + direction.x][row + direction.y]
+	if first_piece != null && other_piece != null:
+		state=wait
+		all_pieces[column][row] = other_piece
+		all_pieces[column + direction.x][row + direction.y] = first_piece
+	#	first_piece.position = grid_to_pixel(column + direction.x, row + direction.y);
+	#   other_piece.position = grid_to_pixel(column, row);
+		first_piece.move(grid_to_pixel(column + direction.x, row + direction.y))
+		other_piece.move(grid_to_pixel(column, row))
+		all_matches=make_2d_array()
+		var first_elem_chk=find_match(column,row)	
+		var second_elem_chk=find_match(column + direction.x, row + direction.y)	
+		print_match_grid()
+		if first_elem_chk || second_elem_chk:
+			get_parent().get_node("destroy_timer").start()
+		else:
+			# wait 0.8 seconds
+			await get_tree().create_timer(0.8).timeout 
+			all_pieces[column][row] = first_piece
+			all_pieces[column + direction.x][row + direction.y] = other_piece
+			other_piece.move(grid_to_pixel(column + direction.x, row + direction.y))
+			first_piece.move(grid_to_pixel(column, row))
+			state=move
+			swap_back()
+			
 
+func swap_back():
+	print("swap back")
+		
 func touch_difference(grid_1,grid_2):
 	var difference = grid_2 - grid_1
 	if abs(difference.x)>abs(difference.y):
@@ -225,10 +287,10 @@ func touch_difference(grid_1,grid_2):
 			swap_pieces(grid_1.x,grid_1.y,Vector2(1,0))
 		elif difference.x<0:
 			swap_pieces(grid_1.x,grid_1.y,Vector2(-1,0))
-	elif abs(difference.x)<abs(difference.y):
-		if difference.x > 0:
+	elif abs(difference.y)>abs(difference.x):
+		if difference.y > 0:
 			swap_pieces(grid_1.x,grid_1.y,Vector2(0,1))
-		elif difference.x<0:
+		elif difference.y<0:
 			swap_pieces(grid_1.x,grid_1.y,Vector2(0,-1))
 		
 	
@@ -238,8 +300,8 @@ func touch_input():
 		var pos=pixel_to_grid(first_touch.x,first_touch.y)
 		print("start:" + str(pos))
 		if is_in_grid(pos.x,pos.y):
-			all_matches=make_2d_array()
-			find_match(pos.x,pos.y)
+			#all_matches=make_2d_array()
+			#find_match(pos.x,pos.y)
 			controlling=true
 		else:
 			print ("off the grid")
@@ -247,7 +309,7 @@ func touch_input():
 		final_touch = get_global_mouse_position()
 		var pos=pixel_to_grid(final_touch.x,final_touch.y)
 		print("end:" + str(pos))
-		if is_in_grid(pos.x,pos.y):
+		if is_in_grid(pos.x,pos.y) && controlling:
 			touch_difference(pixel_to_grid(first_touch.x,first_touch.y),
 							pixel_to_grid(final_touch.x,final_touch.y))			
 			print("swipe")
@@ -257,8 +319,62 @@ func touch_input():
 		spawn_pieces()
 	if Input.is_action_just_released("ui_mouse_middle"):
 		search_match_grid()
-
+		print_match_grid()
 # Called every frame. 'delta' is the elapsed time since the previous frame.
 func _process(delta):
-	touch_input()
-	pass
+	if state==move:
+		touch_input()
+
+
+
+func _on_destroy_timer_timeout():
+	for i in width:
+		for j in height:
+			if all_pieces[i][j]!= null && all_matches[i][j]!=null:
+				all_pieces[i][j].queue_free()
+				all_pieces[i][j]=null
+	get_parent().get_node("collapse_timer").start()			
+
+func collapse():
+	for i in width:
+		for j in height:
+			if all_pieces[i][j] == null:
+				for k in range(j+1,height):
+					if all_pieces[i][k]!=null:
+						all_pieces[i][k].move(grid_to_pixel(i,j))
+						all_pieces[i][j]=all_pieces[i][k]
+						all_pieces[i][k]=null
+						break
+
+func refill_columns():
+	for i in width:
+		for j in height:
+			if all_pieces[i][j]==null:
+				var rand = floor(randf_range(0,possible_pieces.size()))
+				var piece = possible_pieces[rand].instantiate()
+				while check_line_column(i,j,piece.color)>=3 ||check_line_row(i,j,piece.color)>=3:
+						piece.queue_free()
+						rand = floor(randf_range(0,possible_pieces.size()))
+						piece = possible_pieces[rand].instantiate()
+				add_child(piece)
+				piece.position=grid_to_pixel(i,j+y_offset)
+				piece.move(grid_to_pixel(i,j))
+				all_pieces[i][j]=piece
+
+func _on_collapse_timer_timeout():
+	collapse()
+	get_parent().get_node("refill_timer").start()
+
+
+func _on_refill_timer_timeout():
+	refill_columns()
+	get_parent().get_node("recheck_timer").start()
+	
+
+
+func _on_recheck_timer_timeout():
+	var match=search_match_grid()
+	if match:
+		get_parent().get_node("destroy_timer").start()
+	else:
+		state=move
