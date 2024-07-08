@@ -4,12 +4,12 @@ extends Node2D
 enum {wait,move}
 var state
 #Varibles para grid
-@export var width:int
-@export var height:int
-@export var x_start:int
-@export var y_start:int
-@export var offset:int
-@export var y_offset:int
+var width
+var height
+var x_start
+var y_start
+var offset
+var y_offset
 
 #pieces in board
 var all_pieces=[]
@@ -38,14 +38,34 @@ var possible_pieces=[
 	preload("res://scenes/pink_piece.tscn"),
 	preload("res://scenes/yellow_piece.tscn"),
 ]
+
+#score variable
+signal update_score
+@export var piece_value:int
+var streak=1
+var refill_bonus=1
+
+#timer variable
+signal update_timer
+
+var end_game=false
+
+
 # Called when the node enters the scene tree for the first time.
 func _ready():
+	width=GlobalVars.width
+	height=GlobalVars.height
+	x_start=GlobalVars.x_start
+	y_start=GlobalVars.y_start
+	offset=GlobalVars.offset
+	y_offset=GlobalVars.y_offset
+	print(GlobalVars.get_boardsize())
 	all_pieces=make_2d_array()	
 	all_matches=make_2d_array()	
 	spawn_pieces()
-	print(all_pieces)
+	print (GlobalVars.height)
 	state=move
-	
+		
 func make_2d_array():
 	var array = []
 	for i in width:
@@ -200,9 +220,7 @@ func check_line_column(column,row,color):
 func find_match(column,row):
 	var color=all_pieces[column][row].color
 	var items_lin_r=check_line_row(column,row,color)
-	print ("line items:" + str(items_lin_r))
 	var items_lin_c=check_line_column(column,row,color)
-	print ("line items:" + str(items_lin_c))
 	if items_lin_r>=3 or items_lin_c>=3:		
 		all_matches[column][row]=color
 		all_pieces[column][row].match()
@@ -210,6 +228,14 @@ func find_match(column,row):
 		var right_check=check_match_right(column,row,color,0,0)
 		var up_check=check_match_up(column,row,color,0,0)
 		var down_check=check_match_down(column,row,color,0,0)
+		var pieces_removed=1+left_check[1]+right_check[1]+up_check[1]+down_check[1]
+		var score=pieces_removed*piece_value*streak*refill_bonus
+		if pieces_removed>3:
+			score=score+100*(pieces_removed-3)
+		if pieces_removed>5:
+			emit_signal("update_timer",+10)
+		emit_signal("update_score",score)
+		streak+=1
 		print ("left check:" + str(left_check))
 		print ("right check:" + str(right_check))
 		print ("up check:" + str(up_check))
@@ -224,14 +250,8 @@ func search_match_grid():
 	all_matches=make_2d_array()
 	for i in range (0,width):
 		for j in range(0,height):
-			#var color=all_pieces[i][j].color
-#			var numelem_c=check_line_column(i,j,color)
-#			var numelem_r=check_line_row(i,j,color)
-#			if numelem_c>=3 or numelem_r>=3:
-			print (str(i)+"-"+str(j))
 			if find_match(i,j):
 				matched=true
-	print(all_matches)
 	return matched
 
 func print_match_grid():
@@ -256,8 +276,6 @@ func swap_pieces(column,row,direction):
 		state=wait
 		all_pieces[column][row] = other_piece
 		all_pieces[column + direction.x][row + direction.y] = first_piece
-	#	first_piece.position = grid_to_pixel(column + direction.x, row + direction.y);
-	#   other_piece.position = grid_to_pixel(column, row);
 		first_piece.move(grid_to_pixel(column + direction.x, row + direction.y))
 		other_piece.move(grid_to_pixel(column, row))
 		all_matches=make_2d_array()
@@ -322,7 +340,7 @@ func touch_input():
 		print_match_grid()
 # Called every frame. 'delta' is the elapsed time since the previous frame.
 func _process(delta):
-	if state==move:
+	if state==move && !end_game:
 		touch_input()
 
 
@@ -360,6 +378,8 @@ func refill_columns():
 				piece.position=grid_to_pixel(i,j+y_offset)
 				piece.move(grid_to_pixel(i,j))
 				all_pieces[i][j]=piece
+	refill_bonus+=1
+	streak=1
 
 func _on_collapse_timer_timeout():
 	collapse()
@@ -378,3 +398,15 @@ func _on_recheck_timer_timeout():
 		get_parent().get_node("destroy_timer").start()
 	else:
 		state=move
+		streak=1
+		refill_bonus=1
+
+
+func _on_countdown_timer_timeout():
+	emit_signal("update_timer",-1)
+
+
+func _on_top_ui_stop_game():
+	end_game=true
+
+	
