@@ -448,3 +448,15 @@ func _on_restart_pressed():
 	print("restart game")
 	destroy_pieces()
 	start()	
+
+
+func _on_toggle_pause_pressed():
+	print("pause toggle")
+	if pause_game:
+		pause_game=false
+		get_parent().get_node("background/MarginContainer/texture_pause").hide()
+	else:
+		pause_game=true
+		get_parent().get_node("background/MarginContainer/texture_pause").show()
+	emit_signal("toggle_pause",pause_game)
+	
