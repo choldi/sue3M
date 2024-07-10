@@ -1,4 +1,4 @@
-extends Timer
+extends TextureButton
 
 
 # Called when the node enters the scene tree for the first time.
@@ -11,21 +11,8 @@ func _process(delta):
 	pass
 
 
-func _on_top_ui_stop_game():
-	self.stop()
-
-
 func _on_grid_toggle_pause(paused):
 	if paused:
-		self.stop()
+		self.texture_normal=load("res://Assets/Buttons/play_btn.png")
 	else:
-		self.start()
-
-
-func _on_grid_reset_timer():
-	self.start()
-
-
-
-func _on_grid_start_timer():
-	self.start()
+		self.texture_normal=load("res://Assets/Buttons/pause_btn.png")

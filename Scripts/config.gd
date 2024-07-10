@@ -6,6 +6,9 @@ var x_start:int
 var y_start:int
 var offset:int
 var y_offset:int
+var start_minutes:int
+var start_seconds:int
+
 
 # Called when the node enters the scene tree for the first time.
 func _ready():
@@ -15,6 +18,8 @@ func _ready():
 	y_start=800
 	offset=64
 	y_offset=2
+	start_minutes=3
+	start_seconds=0
 	pass # Replace with function body.
 
 func get_boardsize():

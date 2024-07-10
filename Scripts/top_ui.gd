@@ -39,3 +39,15 @@ func _on_grid_update_timer(delta):
 	if seconds<=0:
 		emit_signal("stop_game")
 	
+
+
+func _on_grid_reset_score():
+	var score=0
+	score_label.text = "%06d" % score
+
+
+func _on_grid_reset_timer():
+	var start_minutes=GlobalVars.start_minutes
+	var start_seconds=GlobalVars.start_seconds
+	time_label.text="%d:%02d" % [start_minutes,start_seconds]
+	pass # Replace with function body.

@@ -1,0 +1,9 @@
+[gd_scene load_steps=2 format=3 uid="uid://cw87ms88k833f"]
+
+[ext_resource type="Texture2D" uid="uid://c6ntfpch5uqrp" path="res://Assets/art/bottom_ui.png" id="1_yym3s"]
+
+[node name="bottom_ui" type="TextureRect"]
+offset_top = 931.0
+offset_right = 576.0
+offset_bottom = 1023.0
+texture = ExtResource("1_yym3s")

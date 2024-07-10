@@ -41,15 +41,35 @@ var possible_pieces=[
 
 #score variable
 signal update_score
+signal reset_score
 @export var piece_value:int
 var streak=1
 var refill_bonus=1
 
 #timer variable
 signal update_timer
+signal reset_timer
+signal start_timer
+
 
 var end_game=false
+var pause_game=false
 
+signal toggle_pause
+
+func start():
+	
+	all_pieces=make_2d_array()	
+	all_matches=make_2d_array()	
+	spawn_pieces()
+	state=move
+	end_game=false
+	pause_game=false
+	emit_signal("reset_score")
+	emit_signal("reset_timer")
+	emit_signal("start_timer")
+	emit_signal("toggle_pause",pause_game)
+	
 
 # Called when the node enters the scene tree for the first time.
 func _ready():
@@ -59,13 +79,8 @@ func _ready():
 	y_start=GlobalVars.y_start
 	offset=GlobalVars.offset
 	y_offset=GlobalVars.y_offset
-	print(GlobalVars.get_boardsize())
-	all_pieces=make_2d_array()	
-	all_matches=make_2d_array()	
-	spawn_pieces()
-	print (GlobalVars.height)
-	state=move
-		
+	start()
+			
 func make_2d_array():
 	var array = []
 	for i in width:
@@ -340,9 +355,15 @@ func touch_input():
 		print_match_grid()
 # Called every frame. 'delta' is the elapsed time since the previous frame.
 func _process(delta):
-	if state==move && !end_game:
+	if state==move && !end_game && !pause_game:
 		touch_input()
 
+func destroy_pieces():
+	for i in width:
+		for j in height:
+			if all_pieces[i][j]!= null:
+				all_pieces[i][j].queue_free()
+				all_pieces[i][j]=null
 
 
 func _on_destroy_timer_timeout():
@@ -410,3 +431,20 @@ func _on_top_ui_stop_game():
 	end_game=true
 
 	
+
+
+func _on_toggle_play_btn_pressed():
+	print("play toggle")
+	if pause_game:
+		pause_game=false
+	else:
+		pause_game=true
+	emit_signal("toggle_pause",pause_game)
+		
+		
+
+
+func _on_restart_pressed():
+	print("restart game")
+	destroy_pieces()
+	start()	
