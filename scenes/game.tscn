@@ -1,15 +1,16 @@
-[gd_scene load_steps=11 format=3 uid="uid://dpyutm6qgghm0"]
+[gd_scene load_steps=12 format=3 uid="uid://dpyutm6qgghm0"]
 
 [ext_resource type="PackedScene" uid="uid://bgmokkhk5v0no" path="res://scenes/global_vars.tscn" id="1_1kmu6"]
 [ext_resource type="Texture2D" uid="uid://hpw3h18e2h8u" path="res://Assets/art/background1.png" id="1_550sj"]
 [ext_resource type="Texture2D" uid="uid://mkg1ki6yglkc" path="res://Assets/art/texture_pause.jpg" id="3_6ear7"]
 [ext_resource type="PackedScene" uid="uid://coc7hyi3ng0f2" path="res://scenes/top_ui.tscn" id="3_jepto"]
-[ext_resource type="PackedScene" uid="uid://cw87ms88k833f" path="res://scenes/bottom_ui.tscn" id="4_ann06"]
+[ext_resource type="PackedScene" path="res://scenes/bottom_ui.tscn" id="4_ann06"]
 [ext_resource type="Script" path="res://Scripts/grid.gd" id="4_n1tsu"]
 [ext_resource type="Texture2D" uid="uid://bqpt2tojnkpsa" path="res://Assets/Buttons/pause_btn.png" id="5_qlf6v"]
 [ext_resource type="Script" path="res://Scripts/countdown_timer.gd" id="6_4iyjr"]
 [ext_resource type="Script" path="res://Scripts/toggle_pause.gd" id="7_asccg"]
 [ext_resource type="Texture2D" uid="uid://dbq1lhxt3y50v" path="res://Assets/Buttons/restart_btn.png" id="7_eyest"]
+[ext_resource type="Script" path="res://Scripts/GameOver.gd" id="10_r2dwh"]
 
 [node name="game" type="Node2D"]
 metadata/_edit_horizontal_guides_ = [192.0, 936.0]
@@ -22,6 +23,7 @@ offset_bottom = 40.0
 texture = ExtResource("1_550sj")
 
 [node name="MarginContainer" type="MarginContainer" parent="background"]
+layout_mode = 0
 offset_top = 192.0
 offset_right = 572.0
 offset_bottom = 934.0
@@ -82,6 +84,54 @@ stretch_mode = 3
 script = ExtResource("4_n1tsu")
 piece_value = 10
 
+[node name="GameOver" type="MarginContainer" parent="."]
+offset_top = 200.0
+offset_right = 576.0
+offset_bottom = 1024.0
+grow_horizontal = 2
+grow_vertical = 2
+size_flags_horizontal = 3
+size_flags_vertical = 3
+script = ExtResource("10_r2dwh")
+
+[node name="TextureRect" type="TextureRect" parent="GameOver"]
+layout_mode = 2
+texture = ExtResource("3_6ear7")
+
+[node name="VBoxContainer" type="VBoxContainer" parent="GameOver/TextureRect"]
+layout_mode = 1
+anchors_preset = 8
+anchor_left = 0.5
+anchor_top = 0.5
+anchor_right = 0.5
+anchor_bottom = 0.5
+offset_left = -173.5
+offset_top = -78.5
+offset_right = 173.5
+offset_bottom = 78.5
+grow_horizontal = 2
+grow_vertical = 2
+size_flags_horizontal = 4
+size_flags_vertical = 4
+theme_override_constants/separation = 16
+alignment = 1
+
+[node name="lbl_gameover" type="Label" parent="GameOver/TextureRect/VBoxContainer"]
+layout_mode = 2
+size_flags_horizontal = 4
+size_flags_vertical = 6
+theme_override_font_sizes/font_size = 64
+text = "Game Over"
+horizontal_alignment = 1
+vertical_alignment = 1
+
+[node name="btn_restart" type="Button" parent="GameOver/TextureRect/VBoxContainer"]
+layout_mode = 2
+size_flags_horizontal = 4
+size_flags_vertical = 6
+theme_override_font_sizes/font_size = 32
+text = "Restart"
+
 [node name="destroy_timer" type="Timer" parent="."]
 wait_time = 0.5
 one_shot = true
@@ -113,6 +163,8 @@ script = ExtResource("6_4iyjr")
 [connection signal="toggle_pause" from="grid" to="countdown_timer" method="_on_grid_toggle_pause"]
 [connection signal="update_score" from="grid" to="top_ui" method="_on_grid_update_score"]
 [connection signal="update_timer" from="grid" to="top_ui" method="_on_grid_update_timer"]
+[connection signal="restart_game" from="GameOver" to="grid" method="_on_game_over_restart_game"]
+[connection signal="pressed" from="GameOver/TextureRect/VBoxContainer/btn_restart" to="GameOver" method="_on_btn_restart_pressed"]
 [connection signal="timeout" from="destroy_timer" to="grid" method="_on_destroy_timer_timeout"]
 [connection signal="timeout" from="collapse_timer" to="grid" method="_on_collapse_timer_timeout"]
 [connection signal="timeout" from="refill_timer" to="grid" method="_on_refill_timer_timeout"]

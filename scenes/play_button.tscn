@@ -1,0 +1,9 @@
+[gd_scene load_steps=2 format=3 uid="uid://cj3018k6abd6a"]
+
+[ext_resource type="Texture2D" uid="uid://bnomi1hp6haq8" path="res://Assets/Buttons/Button-Play-icon.png" id="1_nvyu0"]
+
+[node name="play_button" type="Node2D"]
+
+[node name="Sprite2D" type="Sprite2D" parent="."]
+scale = Vector2(0.5, 0.5)
+texture = ExtResource("1_nvyu0")

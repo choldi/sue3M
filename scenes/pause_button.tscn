@@ -1,0 +1,9 @@
+[gd_scene load_steps=2 format=3 uid="uid://r4uxya2ff8t0"]
+
+[ext_resource type="Texture2D" uid="uid://cm5b1q76hy7au" path="res://Assets/Buttons/Button-Pause-icon.png" id="1_eohor"]
+
+[node name="pause_button" type="Node2D"]
+
+[node name="Sprite2D" type="Sprite2D" parent="."]
+scale = Vector2(0.5, 0.5)
+texture = ExtResource("1_eohor")

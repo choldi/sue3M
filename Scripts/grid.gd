@@ -16,6 +16,7 @@ var all_pieces=[]
 
 #matches in board
 var all_matches=[]
+var collections_to_delete=[]
 
 #touch Variables
 var first_touch=Vector2(0,0)
@@ -114,7 +115,7 @@ func spawn_pieces():
 			all_pieces[i][j]=piece
 	#queue_free()
 	
-func check_match_left(column,row,color,items,items_tot):
+func check_match_left(column,row,color,items,items_tot,array_pieces):
 	if column>0:
 		print("left")
 		if (all_pieces[column-1][row].color==color):
@@ -123,18 +124,19 @@ func check_match_left(column,row,color,items,items_tot):
 				items+=1
 				all_matches[column-1][row]=color
 				all_pieces[column-1][row].match()
-				var up_check=check_match_up(column-1,row,color,0,0)
-				var down_check=check_match_down(column-1,row,color,0,0)
+				array_pieces.push_back([column-1,row])
+				var up_check=check_match_up(column-1,row,color,0,0,array_pieces)
+				var down_check=check_match_down(column-1,row,color,0,0,array_pieces)
 				items_tot+=up_check[1]+down_check[1]+1
-				return check_match_left(column-1,row,color,items,items_tot)				
+				return check_match_left(column-1,row,color,items,items_tot,array_pieces)				
 			else:
-				return [items,items_tot]
+				return [items,items_tot,array_pieces]
 		else:
-			return [items,items_tot]
+			return [items,items_tot,array_pieces]
 	else:
-		return [items,items_tot]
+		return [items,items_tot,array_pieces]
 		
-func check_match_right(column,row,color,items,items_tot):
+func check_match_right(column,row,color,items,items_tot,array_pieces):
 	if column<width-1:
 		print("right")
 		if (all_pieces[column+1][row].color==color):
@@ -143,18 +145,19 @@ func check_match_right(column,row,color,items,items_tot):
 				items+=1
 				all_matches[column+1][row]=color
 				all_pieces[column+1][row].match()
-				var up_check=check_match_up(column+1,row,color,0,0)
-				var down_check=check_match_down(column+1,row,color,0,0)
+				array_pieces.push_back([column+1,row])
+				var up_check=check_match_up(column+1,row,color,0,0,array_pieces)
+				var down_check=check_match_down(column+1,row,color,0,0,array_pieces)
 				items_tot+=up_check[1]+down_check[1]+1
-				return check_match_right(column+1,row,color,items,items_tot)
+				return check_match_right(column+1,row,color,items,items_tot,array_pieces)
 			else:
-				return [items,items_tot]
+				return [items,items_tot,array_pieces]
 		else:
-			return [items,items_tot]
+			return [items,items_tot,array_pieces]
 	else:
-		return [items,items_tot]
+		return [items,items_tot,array_pieces]
 
-func check_match_down(column,row,color,items,items_tot):
+func check_match_down(column,row,color,items,items_tot,array_pieces):
 	if row>0:
 		print("down")
 		if (all_pieces[column][row-1].color==color):
@@ -163,18 +166,19 @@ func check_match_down(column,row,color,items,items_tot):
 				items+=1
 				all_matches[column][row-1]=color
 				all_pieces[column][row-1].match()
-				var left_check=check_match_left(column,row-1,color,0,0)
-				var right_check=check_match_right(column,row-1,color,0,0)
+				array_pieces.push_back([column,row-1])
+				var left_check=check_match_left(column,row-1,color,0,0,array_pieces)
+				var right_check=check_match_right(column,row-1,color,0,0,array_pieces)
 				items_tot+=left_check[1]+right_check[1]+1
-				return check_match_down(column,row-1,color,items,items_tot)
+				return check_match_down(column,row-1,color,items,items_tot,array_pieces)
 			else:
-				return [items,items_tot]
+				return [items,items_tot,array_pieces]
 		else:
-			return [items,items_tot]
+			return [items,items_tot,array_pieces]
 	else:
-		return [items,items_tot]
+		return [items,items_tot,array_pieces]
 		
-func check_match_up(column,row,color,items,items_tot):
+func check_match_up(column,row,color,items,items_tot,array_pieces):
 	if row<height-1:
 		print("up")
 		if (all_pieces[column][row+1].color==color):
@@ -183,16 +187,17 @@ func check_match_up(column,row,color,items,items_tot):
 				items+=1
 				all_matches[column][row+1]=color
 				all_pieces[column][row+1].match()
-				var left_check=check_match_left(column,row+1,color,0,0)
-				var right_check=check_match_right(column,row+1,color,0,0)
+				array_pieces.push_back([column,row+1])
+				var left_check=check_match_left(column,row+1,color,0,0,array_pieces)
+				var right_check=check_match_right(column,row+1,color,0,0,array_pieces)
 				items_tot+=left_check[1]+right_check[1]+1
-				return check_match_up(column,row+1,color,items,items_tot)
+				return check_match_up(column,row+1,color,items,items_tot,array_pieces)
 			else:
-				return [items,items_tot]
+				return [items,items_tot,array_pieces]
 		else:
-			return [items,items_tot]
+			return [items,items_tot,array_pieces]
 	else:
-		return [items,items_tot]
+		return [items,items_tot,array_pieces]
 
 func check_line_row(column,row,color):
 	var item=1
@@ -233,16 +238,20 @@ func check_line_column(column,row,color):
 	
 
 func find_match(column,row):
+	var pieces_to_delete=[]
+	pieces_to_delete.push_back([column,row])
 	var color=all_pieces[column][row].color
 	var items_lin_r=check_line_row(column,row,color)
 	var items_lin_c=check_line_column(column,row,color)
-	if items_lin_r>=3 or items_lin_c>=3:		
+	if items_lin_r>=3 or items_lin_c>=3:
+		print("items_line:" + str(items_lin_r) + " - items_column" + str(items_lin_c))
 		all_matches[column][row]=color
 		all_pieces[column][row].match()
-		var left_check=check_match_left(column,row,color,0,0)
-		var right_check=check_match_right(column,row,color,0,0)
-		var up_check=check_match_up(column,row,color,0,0)
-		var down_check=check_match_down(column,row,color,0,0)
+		var left_check=check_match_left(column,row,color,0,0,pieces_to_delete)
+		var right_check=check_match_right(column,row,color,0,0,left_check[2])
+		var up_check=check_match_up(column,row,color,0,0,right_check[2])
+		var down_check=check_match_down(column,row,color,0,0,up_check[2])
+		pieces_to_delete=down_check[2]
 		var pieces_removed=1+left_check[1]+right_check[1]+up_check[1]+down_check[1]
 		var score=pieces_removed*piece_value*streak*refill_bonus
 		if pieces_removed>3:
@@ -255,7 +264,10 @@ func find_match(column,row):
 		print ("right check:" + str(right_check))
 		print ("up check:" + str(up_check))
 		print ("down check:" + str(down_check))
-		print(all_matches)
+#		print(all_matches)
+		print("pieces to delete:" + str(pieces_to_delete))
+		collections_to_delete.push_back(pieces_to_delete)
+		print("collections to delete:" + str(collections_to_delete))
 		return true
 	else:
 		return false
@@ -285,6 +297,7 @@ func is_in_grid(column,row):
 	return false
 
 func swap_pieces(column,row,direction):
+	collections_to_delete=[]
 	var first_piece = all_pieces[column][row]
 	var other_piece = all_pieces[column + direction.x][row + direction.y]
 	if first_piece != null && other_piece != null:
@@ -367,13 +380,20 @@ func destroy_pieces():
 
 
 func _on_destroy_timer_timeout():
+	print("collection_to_delete:" + str(collections_to_delete))
+	var collection=[]
+	for i in range(collections_to_delete.size()):
+		if collections_to_delete[i].size() > 1:
+			collection.push_back(collections_to_delete[i])
+	print("collection_to_delete after:" + str(collection))
 	for i in width:
 		for j in height:
 			if all_pieces[i][j]!= null && all_matches[i][j]!=null:
 				all_pieces[i][j].queue_free()
 				all_pieces[i][j]=null
 	get_parent().get_node("collapse_timer").start()			
-
+	collections_to_delete=[]
+	
 func collapse():
 	for i in width:
 		for j in height:
@@ -429,6 +449,7 @@ func _on_countdown_timer_timeout():
 
 func _on_top_ui_stop_game():
 	end_game=true
+	get_parent().get_node("GameOver").show()
 
 	
 
@@ -460,3 +481,8 @@ func _on_toggle_pause_pressed():
 		get_parent().get_node("background/MarginContainer/texture_pause").show()
 	emit_signal("toggle_pause",pause_game)
 	
+
+
+func _on_game_over_restart_game():
+	get_parent().get_node("GameOver").hide()
+	_on_restart_pressed()
