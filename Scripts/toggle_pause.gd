@@ -14,5 +14,7 @@ func _process(delta):
 func _on_grid_toggle_pause(paused):
 	if paused:
 		self.texture_normal=load("res://Assets/Buttons/play_btn.png")
+		get_parent().get_node("restart").disabled=false
 	else:
 		self.texture_normal=load("res://Assets/Buttons/pause_btn.png")
+		get_parent().get_node("restart").disabled=true

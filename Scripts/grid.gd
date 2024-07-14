@@ -43,6 +43,9 @@ var possible_pieces=[
 #score variable
 signal update_score
 signal reset_score
+signal display_hi_score
+signal check_hi_score
+
 @export var piece_value:int
 var streak=1
 var refill_bonus=1
@@ -70,8 +73,10 @@ func start():
 	emit_signal("reset_timer")
 	emit_signal("start_timer")
 	emit_signal("toggle_pause",pause_game)
-	
-
+	get_parent().get_node("bottom_ui/MarginContainer/HBoxContainer/toggle_pause").show()			
+	get_parent().get_node("GameOver").hide()
+	var hi=GlobalVars.load_hiscore()
+	emit_signal("display_hi_score",int(hi))
 # Called when the node enters the scene tree for the first time.
 func _ready():
 	width=GlobalVars.width
@@ -382,6 +387,7 @@ func destroy_pieces():
 func _on_destroy_timer_timeout():
 	pause_game=true
 	emit_signal("toggle_pause",pause_game)			
+	get_parent().get_node("bottom_ui/MarginContainer/HBoxContainer/toggle_pause").disabled=true			
 	print("collection_to_delete:" + str(collections_to_delete))
 	var collection=[]
 	for i in range(collections_to_delete.size()):
@@ -444,7 +450,8 @@ func _on_recheck_timer_timeout():
 		streak=1
 		refill_bonus=1
 		pause_game=false
-		emit_signal("toggle_pause",pause_game)			
+		emit_signal("toggle_pause",pause_game)
+		get_parent().get_node("bottom_ui/MarginContainer/HBoxContainer/toggle_pause").disabled=false			
 
 
 func _on_countdown_timer_timeout():
@@ -454,6 +461,7 @@ func _on_countdown_timer_timeout():
 func _on_top_ui_stop_game():
 	end_game=true
 	get_parent().get_node("GameOver").show()
+	emit_signal("check_hi_score")
 
 	
 

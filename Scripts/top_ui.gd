@@ -4,6 +4,7 @@ signal stop_game
 
 @onready var score_label=$MarginContainer/HBoxContainer/ScoreLabel
 @onready var time_label=$MarginContainer/HBoxContainer/TimeLabel
+@onready var hi_points=$MarginContainer/HBoxContainer/HiScore/hi_points
 # Called when the node enters the scene tree for the first time.
 func _ready():
 	pass # Replace with function body.
@@ -51,3 +52,15 @@ func _on_grid_reset_timer():
 	var start_seconds=GlobalVars.start_seconds
 	time_label.text="%d:%02d" % [start_minutes,start_seconds]
 	pass # Replace with function body.
+
+
+func _on_grid_display_hi_score(hi_score):
+	hi_points.text = "%06d" % hi_score
+
+
+func _on_grid_check_hi_score():
+	var hi_num=int(hi_points.text)
+	var score=int(score_label.text)
+	if score>hi_num:
+		GlobalVars.save_hiscore(score_label.text)
+		hi_points.text=score_label.text
