@@ -361,11 +361,11 @@ func touch_input():
 			print("swipe")
 		controlling=false
 		
-	if Input.is_action_just_released("ui_mouse_right"):
-		spawn_pieces()
-	if Input.is_action_just_released("ui_mouse_middle"):
-		search_match_grid()
-		print_match_grid()
+#	if Input.is_action_just_released("ui_mouse_right"):
+#		spawn_pieces()
+#	if Input.is_action_just_released("ui_mouse_middle"):
+#		search_match_grid()
+#		print_match_grid()
 # Called every frame. 'delta' is the elapsed time since the previous frame.
 func _process(delta):
 	if state==move && !end_game && !pause_game:
@@ -380,6 +380,8 @@ func destroy_pieces():
 
 
 func _on_destroy_timer_timeout():
+	pause_game=true
+	emit_signal("toggle_pause",pause_game)			
 	print("collection_to_delete:" + str(collections_to_delete))
 	var collection=[]
 	for i in range(collections_to_delete.size()):
@@ -441,6 +443,8 @@ func _on_recheck_timer_timeout():
 		state=move
 		streak=1
 		refill_bonus=1
+		pause_game=false
+		emit_signal("toggle_pause",pause_game)			
 
 
 func _on_countdown_timer_timeout():
