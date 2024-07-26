@@ -1,9 +1,14 @@
-[gd_scene load_steps=3 format=3 uid="uid://b6cl7lu7rslf4"]
+[gd_scene load_steps=7 format=3 uid="uid://b6cl7lu7rslf4"]
 
+[ext_resource type="Script" path="res://Scripts/options.gd" id="1_2r38q"]
 [ext_resource type="Texture2D" uid="uid://bq8ddocsombsb" path="res://Assets/art/title_image.png" id="1_skq3e"]
 [ext_resource type="FontFile" uid="uid://dvajeos2c488q" path="res://Assets/Fonts/Kenney Future Narrow.ttf" id="2_5erfb"]
+[ext_resource type="PackedScene" uid="uid://s2yb4gc2f730" path="res://scenes/vol_slider.tscn" id="3_0inof"]
+[ext_resource type="FontFile" uid="uid://c63i7ou76l030" path="res://Assets/Fonts/Kenney Future.ttf" id="3_grqav"]
+[ext_resource type="AudioStream" uid="uid://bpjaui36g4csa" path="res://Assets/audio/music/Warfare-chosic.com_.mp3" id="6_higa3"]
 
 [node name="options" type="Node2D"]
+script = ExtResource("1_2r38q")
 
 [node name="MarginContainer" type="MarginContainer" parent="."]
 offset_right = 576.0
@@ -41,14 +46,74 @@ theme_override_fonts/font = ExtResource("2_5erfb")
 theme_override_font_sizes/font_size = 50
 text = "sue3M"
 
-[node name="volsliders" type="VBoxContainer" parent="MarginContainer/VBoxContainer"]
+[node name="MarginContainer" type="MarginContainer" parent="MarginContainer/VBoxContainer"]
+layout_mode = 2
+theme_override_constants/margin_left = 20
+theme_override_constants/margin_top = 60
+theme_override_constants/margin_right = 20
+
+[node name="volsliders" type="VBoxContainer" parent="MarginContainer/VBoxContainer/MarginContainer"]
+layout_mode = 2
+theme_override_constants/separation = 40
+
+[node name="vcon_vols" type="VBoxContainer" parent="MarginContainer/VBoxContainer/MarginContainer/volsliders"]
 layout_mode = 2
 
-[node name="mixslider" type="VBoxContainer" parent="MarginContainer/VBoxContainer/volsliders"]
+[node name="lbl_vols" type="Label" parent="MarginContainer/VBoxContainer/MarginContainer/volsliders/vcon_vols"]
+layout_mode = 2
+theme_override_fonts/font = ExtResource("3_grqav")
+theme_override_font_sizes/font_size = 40
+text = "Volume"
+horizontal_alignment = 1
+vertical_alignment = 1
+
+[node name="vcon_mix" type="VBoxContainer" parent="MarginContainer/VBoxContainer/MarginContainer/volsliders"]
 layout_mode = 2
 
-[node name="lblmix" type="Label" parent="MarginContainer/VBoxContainer/volsliders/mixslider"]
+[node name="lbl_mix" type="Label" parent="MarginContainer/VBoxContainer/MarginContainer/volsliders/vcon_mix"]
+layout_mode = 2
+theme_override_fonts/font = ExtResource("2_5erfb")
+theme_override_font_sizes/font_size = 30
+text = "Mixer"
+horizontal_alignment = 1
+vertical_alignment = 1
+
+[node name="mix_slider" parent="MarginContainer/VBoxContainer/MarginContainer/volsliders/vcon_mix" instance=ExtResource("3_0inof")]
+layout_mode = 2
+bus_name = "Master"
+
+[node name="vcon_music" type="VBoxContainer" parent="MarginContainer/VBoxContainer/MarginContainer/volsliders"]
 layout_mode = 2
 
-[node name="slimix" type="HSlider" parent="MarginContainer/VBoxContainer/volsliders/mixslider"]
+[node name="lbl_music" type="Label" parent="MarginContainer/VBoxContainer/MarginContainer/volsliders/vcon_music"]
 layout_mode = 2
+theme_override_fonts/font = ExtResource("2_5erfb")
+theme_override_font_sizes/font_size = 30
+text = "Music
+"
+horizontal_alignment = 1
+vertical_alignment = 1
+
+[node name="music_slider" parent="MarginContainer/VBoxContainer/MarginContainer/volsliders/vcon_music" instance=ExtResource("3_0inof")]
+layout_mode = 2
+bus_name = "Music"
+
+[node name="vcon_sfx" type="VBoxContainer" parent="MarginContainer/VBoxContainer/MarginContainer/volsliders"]
+layout_mode = 2
+
+[node name="lbl_sfx" type="Label" parent="MarginContainer/VBoxContainer/MarginContainer/volsliders/vcon_sfx"]
+layout_mode = 2
+theme_override_fonts/font = ExtResource("2_5erfb")
+theme_override_font_sizes/font_size = 30
+text = "SFX
+"
+horizontal_alignment = 1
+vertical_alignment = 1
+
+[node name="sfx_slider" parent="MarginContainer/VBoxContainer/MarginContainer/volsliders/vcon_sfx" instance=ExtResource("3_0inof")]
+layout_mode = 2
+bus_name = "SFX"
+
+[node name="audio_music" type="AudioStreamPlayer" parent="."]
+stream = ExtResource("6_higa3")
+bus = &"Music"
