@@ -1,0 +1,90 @@
+[gd_scene load_steps=5 format=3 uid="uid://o4wjr5kn8aj7"]
+
+[ext_resource type="FontFile" uid="uid://c63i7ou76l030" path="res://Assets/Fonts/Kenney Future.ttf" id="1_3fmpw"]
+[ext_resource type="Script" path="res://Scripts/main_menu.gd" id="1_8ps2w"]
+[ext_resource type="Texture2D" uid="uid://bq8ddocsombsb" path="res://Assets/art/title_image.png" id="2_bgwrn"]
+[ext_resource type="FontFile" uid="uid://dvajeos2c488q" path="res://Assets/Fonts/Kenney Future Narrow.ttf" id="3_8js2y"]
+
+[node name="main_menu" type="Node2D"]
+script = ExtResource("1_8ps2w")
+
+[node name="ColorRect" type="ColorRect" parent="."]
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+offset_right = 572.0
+offset_bottom = 1024.0
+grow_horizontal = 2
+grow_vertical = 2
+size_flags_horizontal = 3
+size_flags_vertical = 3
+color = Color(0.000693898, 0.000693898, 0.000693898, 1)
+
+[node name="MarginContainer" type="MarginContainer" parent="."]
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+offset_left = 100.0
+offset_top = 100.0
+offset_right = 472.0
+offset_bottom = 924.0
+grow_horizontal = 2
+grow_vertical = 2
+size_flags_horizontal = 3
+size_flags_vertical = 3
+
+[node name="VBoxContainerMain" type="VBoxContainer" parent="MarginContainer"]
+layout_mode = 2
+
+[node name="VBoxContainer" type="VBoxContainer" parent="MarginContainer/VBoxContainerMain"]
+layout_mode = 2
+theme_override_constants/separation = 120
+
+[node name="HBoxContainer" type="HBoxContainer" parent="MarginContainer/VBoxContainerMain/VBoxContainer"]
+layout_mode = 2
+theme_override_constants/separation = 50
+
+[node name="TextureRect" type="TextureRect" parent="MarginContainer/VBoxContainerMain/VBoxContainer/HBoxContainer"]
+custom_minimum_size = Vector2(200, 100)
+layout_mode = 2
+size_flags_horizontal = 3
+size_flags_vertical = 4
+texture = ExtResource("2_bgwrn")
+expand_mode = 2
+stretch_mode = 4
+
+[node name="Label" type="Label" parent="MarginContainer/VBoxContainerMain/VBoxContainer/HBoxContainer"]
+layout_mode = 2
+size_flags_horizontal = 3
+theme_override_fonts/font = ExtResource("3_8js2y")
+theme_override_font_sizes/font_size = 50
+text = "sue3M"
+
+[node name="VBoxContainer" type="VBoxContainer" parent="MarginContainer/VBoxContainerMain/VBoxContainer"]
+layout_mode = 2
+theme_override_constants/separation = 50
+
+[node name="btn_start" type="Button" parent="MarginContainer/VBoxContainerMain/VBoxContainer/VBoxContainer"]
+layout_mode = 2
+size_flags_vertical = 6
+theme_override_fonts/font = ExtResource("1_3fmpw")
+theme_override_font_sizes/font_size = 40
+text = "Start Game"
+
+[node name="btn_options" type="Button" parent="MarginContainer/VBoxContainerMain/VBoxContainer/VBoxContainer"]
+layout_mode = 2
+size_flags_vertical = 6
+theme_override_fonts/font = ExtResource("1_3fmpw")
+theme_override_font_sizes/font_size = 40
+text = "Options"
+
+[node name="btn_exit" type="Button" parent="MarginContainer/VBoxContainerMain/VBoxContainer/VBoxContainer"]
+layout_mode = 2
+size_flags_vertical = 6
+theme_override_fonts/font = ExtResource("1_3fmpw")
+theme_override_font_sizes/font_size = 40
+text = "EXIT"
+
+[connection signal="pressed" from="MarginContainer/VBoxContainerMain/VBoxContainer/VBoxContainer/btn_start" to="." method="_on_btn_start_pressed"]
+[connection signal="pressed" from="MarginContainer/VBoxContainerMain/VBoxContainer/VBoxContainer/btn_options" to="." method="_on_btn_options_pressed"]
+[connection signal="pressed" from="MarginContainer/VBoxContainerMain/VBoxContainer/VBoxContainer/btn_exit" to="." method="_on_btn_exit_pressed"]

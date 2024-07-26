@@ -1,0 +1,54 @@
+[gd_scene load_steps=3 format=3 uid="uid://b6cl7lu7rslf4"]
+
+[ext_resource type="Texture2D" uid="uid://bq8ddocsombsb" path="res://Assets/art/title_image.png" id="1_skq3e"]
+[ext_resource type="FontFile" uid="uid://dvajeos2c488q" path="res://Assets/Fonts/Kenney Future Narrow.ttf" id="2_5erfb"]
+
+[node name="options" type="Node2D"]
+
+[node name="MarginContainer" type="MarginContainer" parent="."]
+offset_right = 576.0
+offset_bottom = 1024.0
+theme_override_constants/margin_left = 10
+theme_override_constants/margin_top = 50
+theme_override_constants/margin_right = 10
+theme_override_constants/margin_bottom = 50
+
+[node name="VBoxContainer" type="VBoxContainer" parent="MarginContainer"]
+layout_mode = 2
+theme_override_constants/separation = 50
+
+[node name="VBoxContainer2" type="VBoxContainer" parent="MarginContainer/VBoxContainer"]
+layout_mode = 2
+theme_override_constants/separation = 120
+
+[node name="HBoxContainer" type="HBoxContainer" parent="MarginContainer/VBoxContainer/VBoxContainer2"]
+layout_mode = 2
+theme_override_constants/separation = 50
+
+[node name="TextureRect" type="TextureRect" parent="MarginContainer/VBoxContainer/VBoxContainer2/HBoxContainer"]
+custom_minimum_size = Vector2(200, 100)
+layout_mode = 2
+size_flags_horizontal = 3
+size_flags_vertical = 4
+texture = ExtResource("1_skq3e")
+expand_mode = 2
+stretch_mode = 4
+
+[node name="Label" type="Label" parent="MarginContainer/VBoxContainer/VBoxContainer2/HBoxContainer"]
+layout_mode = 2
+size_flags_horizontal = 3
+theme_override_fonts/font = ExtResource("2_5erfb")
+theme_override_font_sizes/font_size = 50
+text = "sue3M"
+
+[node name="volsliders" type="VBoxContainer" parent="MarginContainer/VBoxContainer"]
+layout_mode = 2
+
+[node name="mixslider" type="VBoxContainer" parent="MarginContainer/VBoxContainer/volsliders"]
+layout_mode = 2
+
+[node name="lblmix" type="Label" parent="MarginContainer/VBoxContainer/volsliders/mixslider"]
+layout_mode = 2
+
+[node name="slimix" type="HSlider" parent="MarginContainer/VBoxContainer/volsliders/mixslider"]
+layout_mode = 2
