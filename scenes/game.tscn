@@ -1,10 +1,10 @@
-[gd_scene load_steps=14 format=3 uid="uid://dpyutm6qgghm0"]
+[gd_scene load_steps=15 format=3 uid="uid://dpyutm6qgghm0"]
 
 [ext_resource type="PackedScene" uid="uid://bgmokkhk5v0no" path="res://scenes/global_vars.tscn" id="1_1kmu6"]
 [ext_resource type="Texture2D" uid="uid://hpw3h18e2h8u" path="res://Assets/art/background1.png" id="1_550sj"]
 [ext_resource type="Texture2D" uid="uid://mkg1ki6yglkc" path="res://Assets/art/texture_pause.jpg" id="3_6ear7"]
 [ext_resource type="PackedScene" uid="uid://coc7hyi3ng0f2" path="res://scenes/top_ui.tscn" id="3_jepto"]
-[ext_resource type="PackedScene" path="res://scenes/bottom_ui.tscn" id="4_ann06"]
+[ext_resource type="PackedScene" uid="uid://cw87ms88k833f" path="res://scenes/bottom_ui.tscn" id="4_ann06"]
 [ext_resource type="Script" path="res://Scripts/grid.gd" id="4_n1tsu"]
 [ext_resource type="Texture2D" uid="uid://bqpt2tojnkpsa" path="res://Assets/Buttons/pause_btn.png" id="5_qlf6v"]
 [ext_resource type="Script" path="res://Scripts/countdown_timer.gd" id="6_4iyjr"]
@@ -13,6 +13,7 @@
 [ext_resource type="Texture2D" uid="uid://dbq1lhxt3y50v" path="res://Assets/Buttons/restart_btn.png" id="7_eyest"]
 [ext_resource type="Texture2D" uid="uid://b2hq0ed4nrtiw" path="res://Assets/Buttons/pause_gray_btn.png" id="9_ko7wg"]
 [ext_resource type="Script" path="res://Scripts/GameOver.gd" id="10_r2dwh"]
+[ext_resource type="AudioStream" uid="uid://bpjaui36g4csa" path="res://Assets/audio/music/Warfare-chosic.com_.mp3" id="14_rwjid"]
 
 [node name="game" type="Node2D"]
 metadata/_edit_horizontal_guides_ = [192.0, 936.0]
@@ -159,6 +160,14 @@ one_shot = true
 [node name="countdown_timer" type="Timer" parent="."]
 autostart = true
 script = ExtResource("6_4iyjr")
+
+[node name="asp_music" type="AudioStreamPlayer" parent="."]
+stream = ExtResource("14_rwjid")
+autoplay = true
+bus = &"Music"
+
+[node name="asp_sfx" type="AudioStreamPlayer" parent="."]
+bus = &"SFX"
 
 [connection signal="stop_game" from="top_ui" to="grid" method="_on_top_ui_stop_game"]
 [connection signal="stop_game" from="top_ui" to="countdown_timer" method="_on_top_ui_stop_game"]

@@ -40,6 +40,10 @@ var possible_pieces=[
 	preload("res://scenes/yellow_piece.tscn"),
 ]
 
+@onready var snd_destroy=preload("res://Assets/audio/effects/collapse-47652.mp3")
+@onready var snd_addtime=preload("res://Assets/audio/effects/collect-points-190037.mp3")
+@onready var direct_sound=preload("res://scenes/asp_direct.tscn")
+
 #score variable
 signal update_score
 signal reset_score
@@ -263,6 +267,7 @@ func find_match(column,row):
 			score=score+100*(pieces_removed-3)
 		if pieces_removed>5:
 			emit_signal("update_timer",+10)
+			
 		emit_signal("update_score",score)
 		streak+=1
 		print ("left check:" + str(left_check))
@@ -394,11 +399,25 @@ func _on_destroy_timer_timeout():
 		if collections_to_delete[i].size() > 1:
 			collection.push_back(collections_to_delete[i])
 	print("collection_to_delete after:" + str(collection))
-	for i in width:
-		for j in height:
-			if all_pieces[i][j]!= null && all_matches[i][j]!=null:
-				all_pieces[i][j].queue_free()
-				all_pieces[i][j]=null
+	for i in collection.size():
+		for j in collection[i].size():
+			var coord=collection[i][j]
+			var x=coord[0]
+			var y=coord[1]
+			all_pieces[x][y].queue_free()
+			all_pieces[x][y]=null
+		play_effect(snd_destroy,0)
+		if collection[i].size()>5:
+			play_effect(snd_addtime,0)
+		await get_tree().create_timer(.2).timeout
+
+#	for i in width:
+#		for j in height:
+#			if all_pieces[i][j]!= null && all_matches[i][j]!=null:
+#				all_pieces[i][j].queue_free()
+#				all_pieces[i][j]=null
+#  	for i in collection.size():
+#		play_effect(snd_destroy,i*0.5)
 	get_parent().get_node("collapse_timer").start()			
 	collections_to_delete=[]
 	
@@ -429,6 +448,13 @@ func refill_columns():
 				all_pieces[i][j]=piece
 	refill_bonus+=1
 	streak=1
+
+func play_effect(effect,delay):
+	var sound=direct_sound.instantiate()
+	add_child(sound)
+	sound.add_delay(delay)
+	sound.play_sound(effect)
+
 
 func _on_collapse_timer_timeout():
 	collapse()

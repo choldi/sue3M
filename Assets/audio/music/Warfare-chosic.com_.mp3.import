@@ -12,8 +12,8 @@ dest_files=["res://.godot/imported/Warfare-chosic.com_.mp3-d3c717a2877e09e7531b2
 
 [params]
 
-loop=false
-loop_offset=0
-bpm=0
+loop=true
+loop_offset=0.0
+bpm=0.0
 beat_count=0
 bar_beats=4

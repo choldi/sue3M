@@ -55,6 +55,7 @@ func load_hiscore():
 		save_hiscore("000000")
 	return content
 
+
 func set_vol(audio_src,vol):
 	if audio_src=="Master":
 		self.vol_mixer=vol
