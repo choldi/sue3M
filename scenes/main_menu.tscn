@@ -1,9 +1,10 @@
-[gd_scene load_steps=5 format=3 uid="uid://o4wjr5kn8aj7"]
+[gd_scene load_steps=6 format=3 uid="uid://o4wjr5kn8aj7"]
 
 [ext_resource type="FontFile" uid="uid://c63i7ou76l030" path="res://Assets/Fonts/Kenney Future.ttf" id="1_3fmpw"]
 [ext_resource type="Script" path="res://Scripts/main_menu.gd" id="1_8ps2w"]
 [ext_resource type="Texture2D" uid="uid://bq8ddocsombsb" path="res://Assets/art/title_image.png" id="2_bgwrn"]
 [ext_resource type="FontFile" uid="uid://dvajeos2c488q" path="res://Assets/Fonts/Kenney Future Narrow.ttf" id="3_8js2y"]
+[ext_resource type="AudioStream" uid="uid://bpjaui36g4csa" path="res://Assets/audio/music/Warfare-chosic.com_.mp3" id="5_7hpnn"]
 
 [node name="main_menu" type="Node2D"]
 script = ExtResource("1_8ps2w")
@@ -84,6 +85,10 @@ size_flags_vertical = 6
 theme_override_fonts/font = ExtResource("1_3fmpw")
 theme_override_font_sizes/font_size = 40
 text = "EXIT"
+
+[node name="audio_music" type="AudioStreamPlayer" parent="."]
+stream = ExtResource("5_7hpnn")
+bus = &"Music"
 
 [connection signal="pressed" from="MarginContainer/VBoxContainerMain/VBoxContainer/VBoxContainer/btn_start" to="." method="_on_btn_start_pressed"]
 [connection signal="pressed" from="MarginContainer/VBoxContainerMain/VBoxContainer/VBoxContainer/btn_options" to="." method="_on_btn_options_pressed"]
