@@ -18,7 +18,12 @@ func _on_btn_start_pressed():
 	get_tree().change_scene_to_packed(game)
 
 func _on_btn_options_pressed():
-	get_tree().change_scene_to_packed(options)
+	GlobalVars.last_scene=self
+	var ins_option=options.instantiate()
+	var parent=get_parent()
+	parent.remove_child(self)
+	parent.add_child(ins_option)
+		
 
 
 func _on_btn_exit_pressed():

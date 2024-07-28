@@ -114,6 +114,20 @@ vertical_alignment = 1
 layout_mode = 2
 bus_name = "SFX"
 
+[node name="mc_back" type="MarginContainer" parent="MarginContainer/VBoxContainer"]
+layout_mode = 2
+theme_override_constants/margin_left = 50
+theme_override_constants/margin_top = 100
+theme_override_constants/margin_right = 100
+
+[node name="btn_back" type="Button" parent="MarginContainer/VBoxContainer/mc_back"]
+layout_mode = 2
+theme_override_fonts/font = ExtResource("3_grqav")
+theme_override_font_sizes/font_size = 40
+text = "Back"
+
 [node name="audio_music" type="AudioStreamPlayer" parent="."]
 stream = ExtResource("6_higa3")
 bus = &"Music"
+
+[connection signal="pressed" from="MarginContainer/VBoxContainer/mc_back/btn_back" to="." method="_on_btn_back_pressed"]

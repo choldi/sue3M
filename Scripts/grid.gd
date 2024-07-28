@@ -43,6 +43,7 @@ var possible_pieces=[
 @onready var snd_destroy=preload("res://Assets/audio/effects/collapse-47652.mp3")
 @onready var snd_addtime=preload("res://Assets/audio/effects/collect-points-190037.mp3")
 @onready var direct_sound=preload("res://scenes/asp_direct.tscn")
+@onready var options = preload("res://scenes/options.tscn")
 
 #score variable
 signal update_score
@@ -524,3 +525,18 @@ func _on_toggle_pause_pressed():
 func _on_game_over_restart_game():
 	get_parent().get_node("GameOver").hide()
 	_on_restart_pressed()
+
+
+func _on_btn_continue_pressed():
+	pause_game=false
+	get_parent().get_node("background/MarginContainer/texture_pause").hide()
+	emit_signal("toggle_pause",pause_game)
+
+
+func _on_btn_options_pressed():
+	var curr=get_tree().current_scene
+	GlobalVars.last_scene=curr
+	var ins_option=options.instantiate()
+	var parent=curr.get_parent()
+	parent.remove_child(curr)
+	parent.add_child(ins_option)

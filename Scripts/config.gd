@@ -14,7 +14,7 @@ var vol_mixer:float
 var vol_music:float
 var vol_sfx:float
 var max_score:int
-
+var last_scene
 
 # Called when the node enters the scene tree for the first time.
 func _ready():
@@ -42,6 +42,9 @@ func _ready():
 		vol_music=float(config.get_value("VOLUME","Music"))
 		vol_sfx=float(config.get_value("VOLUME","SFX"))
 		max_score=int(config.get_value("SCORE","HI_SCORE"))
+	set_vol("Master",vol_mixer)
+	set_vol("Music",vol_music)
+	set_vol("SFX",vol_sfx)
 	load_hiscore()
 	pass # Replace with function body.
 
@@ -77,14 +80,16 @@ func load_hiscore():
 	return content
 
 
+
 func set_vol(audio_src,vol):
+	var bus_index=AudioServer.get_bus_index(audio_src)
+	AudioServer.set_bus_volume_db(bus_index,linear_to_db(vol))
 	if audio_src=="Master":
 		self.vol_mixer=vol
 	elif audio_src=="Music":
 		self.vol_music=vol
 	elif audio_src=="SFX":
 		self.vol_sfx=vol
-	save_config()
 
 func get_vol(audio_src):
 	if audio_src=="Master":
