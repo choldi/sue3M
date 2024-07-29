@@ -4,7 +4,7 @@
 [ext_resource type="Texture2D" uid="uid://hpw3h18e2h8u" path="res://Assets/art/background1.png" id="1_550sj"]
 [ext_resource type="Texture2D" uid="uid://mkg1ki6yglkc" path="res://Assets/art/texture_pause.jpg" id="3_6ear7"]
 [ext_resource type="PackedScene" uid="uid://coc7hyi3ng0f2" path="res://scenes/top_ui.tscn" id="3_jepto"]
-[ext_resource type="PackedScene" uid="uid://cw87ms88k833f" path="res://scenes/bottom_ui.tscn" id="4_ann06"]
+[ext_resource type="PackedScene" path="res://scenes/bottom_ui.tscn" id="4_ann06"]
 [ext_resource type="Script" path="res://Scripts/grid.gd" id="4_n1tsu"]
 [ext_resource type="FontFile" uid="uid://c63i7ou76l030" path="res://Assets/Fonts/Kenney Future.ttf" id="4_owegl"]
 [ext_resource type="Texture2D" uid="uid://bqpt2tojnkpsa" path="res://Assets/Buttons/pause_btn.png" id="5_qlf6v"]

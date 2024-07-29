@@ -90,7 +90,10 @@ func _ready():
 	y_start=GlobalVars.y_start
 	offset=GlobalVars.offset
 	y_offset=GlobalVars.y_offset
-	GlobalVars.main_scene=get_tree().current_scene
+#	self is grid, parent is game
+	GlobalVars.main_scene=self.get_parent() 
+
+#	GlobalVars.main_scene=self
 	start()
 			
 func make_2d_array():
@@ -535,7 +538,7 @@ func _on_btn_continue_pressed():
 
 
 func _on_btn_options_pressed():
-	var curr=self
+	var curr=GlobalVars.main_scene
 	GlobalVars.last_scene=curr
 	var ins_option=options.instantiate()
 	var parent=curr.get_parent()
