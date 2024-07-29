@@ -90,6 +90,7 @@ func _ready():
 	y_start=GlobalVars.y_start
 	offset=GlobalVars.offset
 	y_offset=GlobalVars.y_offset
+	GlobalVars.main_scene=get_tree().current_scene
 	start()
 			
 func make_2d_array():
@@ -534,7 +535,7 @@ func _on_btn_continue_pressed():
 
 
 func _on_btn_options_pressed():
-	var curr=get_tree().current_scene
+	var curr=self
 	GlobalVars.last_scene=curr
 	var ins_option=options.instantiate()
 	var parent=curr.get_parent()

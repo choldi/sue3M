@@ -15,7 +15,10 @@ func _process(delta):
 
 
 func _on_btn_start_pressed():
-	get_tree().change_scene_to_packed(game)
+	var ins_main=game.instantiate()
+	var parent=get_parent()
+	parent.remove_child(self)
+	parent.add_child(ins_main)
 
 func _on_btn_options_pressed():
 	GlobalVars.last_scene=self

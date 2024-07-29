@@ -15,6 +15,8 @@ var vol_music:float
 var vol_sfx:float
 var max_score:int
 var last_scene
+var grid_scene
+var main_scene
 
 # Called when the node enters the scene tree for the first time.
 func _ready():
