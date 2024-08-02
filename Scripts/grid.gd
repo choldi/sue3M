@@ -30,20 +30,29 @@ var last_place = Vector2(0,0)
 var last_direction = Vector2(0,0)
 
 #possible pieces to paint in board
-var possible_pieces=[
+var all_type_pieces=[[
 	#preload("res://scenes/rainbow.tscn"),
 	preload("res://scenes/blue_piece.tscn"),
 	preload("res://scenes/green_piece.tscn"),
 	preload("res://scenes/light_green_piece.tscn"),
 	preload("res://scenes/orange_piece.tscn"),
 	preload("res://scenes/pink_piece.tscn"),
-	preload("res://scenes/yellow_piece.tscn"),
-]
+	preload("res://scenes/yellow_piece.tscn")
+],[
+		preload("res://scenes/circle.tscn"),
+	preload("res://scenes/diamond.tscn"),
+	preload("res://scenes/hexagon.tscn"),
+	preload("res://scenes/square.tscn"),
+	preload("res://scenes/star.tscn"),
+	preload("res://scenes/triangle.tscn")
+]]
+var possible_pieces
 
 @onready var snd_destroy=preload("res://Assets/audio/effects/collapse-47652.mp3")
 @onready var snd_addtime=preload("res://Assets/audio/effects/collect-points-190037.mp3")
 @onready var direct_sound=preload("res://scenes/asp_direct.tscn")
 @onready var options = preload("res://scenes/options.tscn")
+@onready var label = preload("res://scenes/floating_text.tscn")
 
 #score variable
 signal update_score
@@ -69,7 +78,7 @@ signal toggle_pause
 func start():
 	
 	all_pieces=make_2d_array()	
-	all_matches=make_2d_array()	
+	all_matches=make_2d_array()
 	spawn_pieces()
 	state=move
 	end_game=false
@@ -92,6 +101,7 @@ func _ready():
 	y_offset=GlobalVars.y_offset
 #	self is grid, parent is game
 	GlobalVars.main_scene=self.get_parent() 
+	possible_pieces=all_type_pieces[GlobalVars.piece_type]
 
 #	GlobalVars.main_scene=self
 	start()
@@ -113,6 +123,27 @@ func pixel_to_grid(pixel_x,pixel_y):
 	var column = round((pixel_x - x_start)/offset)
 	var row = round((pixel_y - y_start)/-offset)
 	return Vector2(column,row)
+
+func get_central_coordinate(coords: Array) -> Vector2:
+	var sum = Vector2(0, 0)
+	# Calcular el centroide
+	var cv=[]
+	for coord in coords:
+		var c=Vector2(coord[0],coord[1])
+		sum += c
+		cv.append(c)
+	var centroid = sum / coords.size()
+	
+	# Encontrar la coordenada más cercana al centroide
+	var closest_coord = cv[0]
+	var min_distance = centroid.distance_to(closest_coord)
+	
+	for coord in cv:
+		var distance = centroid.distance_to(coord)
+		if distance < min_distance:
+			min_distance = distance
+			closest_coord = coord
+	return closest_coord
 
 func spawn_pieces():
 	randomize()
@@ -258,7 +289,7 @@ func find_match(column,row):
 	var items_lin_r=check_line_row(column,row,color)
 	var items_lin_c=check_line_column(column,row,color)
 	if items_lin_r>=3 or items_lin_c>=3:
-		print("items_line:" + str(items_lin_r) + " - items_column" + str(items_lin_c))
+		print("items_line:" + str(items_lin_r) + " - items_column:" + str(items_lin_c))
 		all_matches[column][row]=color
 		all_pieces[column][row].match()
 		var left_check=check_match_left(column,row,color,0,0,pieces_to_delete)
@@ -267,22 +298,27 @@ func find_match(column,row):
 		var down_check=check_match_down(column,row,color,0,0,up_check[2])
 		pieces_to_delete=down_check[2]
 		var pieces_removed=1+left_check[1]+right_check[1]+up_check[1]+down_check[1]
-		var score=pieces_removed*piece_value*streak*refill_bonus
-		if pieces_removed>3:
-			score=score+100*(pieces_removed-3)
-		if pieces_removed>5:
-			emit_signal("update_timer",+10)
+#		var score=pieces_removed*piece_value*streak*refill_bonus
+#		if pieces_removed>3:
+#			score=score+100*(pieces_removed-3)
+#		if pieces_removed>=GlobalVars.min_piece_for_bonus:
+#			emit_signal("update_timer",GlobalVars.num_bonus_seconds)
 			
-		emit_signal("update_score",score)
-		streak+=1
+			
+#		emit_signal("update_score",score)
+#		var center=get_central_coordinate(pieces_to_delete)
+#		var pos=grid_to_pixel(center.x,center.y)
+#		var lbl_score=label.instantiate()
+#		add_child(lbl_score)
+#		lbl_score.move_up(pos,Color.WHITE_SMOKE)
+#		streak+=1
 		print ("left check:" + str(left_check))
 		print ("right check:" + str(right_check))
 		print ("up check:" + str(up_check))
 		print ("down check:" + str(down_check))
 #		print(all_matches)
-		print("pieces to delete:" + str(pieces_to_delete))
-		collections_to_delete.push_back(pieces_to_delete)
 		print("collections to delete:" + str(collections_to_delete))
+		collections_to_delete.push_back(pieces_to_delete)
 		return true
 	else:
 		return false
@@ -412,7 +448,31 @@ func _on_destroy_timer_timeout():
 			all_pieces[x][y].queue_free()
 			all_pieces[x][y]=null
 		play_effect(snd_destroy,0)
+		var pieces_removed=collection[i].size()
+		var score=pieces_removed*piece_value*streak*refill_bonus
+		if pieces_removed>3:
+			score=score+100*(pieces_removed-3)
+		emit_signal("update_score",score)
+		var center=get_central_coordinate(collection[i])
+		var pos=grid_to_pixel(center.x,center.y)
+		var lbl_score=label.instantiate()
+		add_child(lbl_score)
+		lbl_score.move_up(pos,Color.WHITE_SMOKE,str(score))
+		streak+=1
+		if pieces_removed>=GlobalVars.min_piece_for_bonus:
+			emit_signal("update_timer",GlobalVars.num_bonus_seconds)
+			var lbl_timer=label.instantiate()
+			add_child(lbl_timer)
+			pos=grid_to_pixel(3,10)
+			lbl_timer.move_up(pos,Color.INDIGO,"+" + str(GlobalVars.num_bonus_seconds) + " s")
+			
+			
+
+
+
+
 		if collection[i].size()>5:
+			await get_tree().create_timer(.2).timeout
 			play_effect(snd_addtime,0)
 		await get_tree().create_timer(.2).timeout
 

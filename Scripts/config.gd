@@ -17,7 +17,9 @@ var max_score:int
 var last_scene
 var grid_scene
 var main_scene
-
+var num_bonus_seconds:int
+var min_piece_for_bonus:int
+var piece_type:int
 # Called when the node enters the scene tree for the first time.
 func _ready():
 	width=8
@@ -30,7 +32,12 @@ func _ready():
 	start_seconds=0
 	score_file="user://scoresave.cfg"
 	config_file="user://sue3m.cfg"
-
+	num_bonus_seconds=10
+	min_piece_for_bonus=6
+	piece_type=0
+	
+	
+	
 	var config = ConfigFile.new()
 	var err = config.load(config_file) 
 	if err != OK: 

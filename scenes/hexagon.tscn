@@ -1,0 +1,10 @@
+[gd_scene load_steps=3 format=3 uid="uid://bp0hma1481abw"]
+
+[ext_resource type="PackedScene" uid="uid://dhvjwidhe1d81" path="res://scenes/Piece.tscn" id="1_7mya2"]
+[ext_resource type="Texture2D" uid="uid://ddbhpmdjsuetr" path="res://Assets/pieces/hexagon.png" id="2_dym62"]
+
+[node name="Piece" instance=ExtResource("1_7mya2")]
+color = "orange"
+
+[node name="sprite" parent="." index="0"]
+texture = ExtResource("2_dym62")
