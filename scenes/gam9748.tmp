@@ -114,7 +114,6 @@ texture_disabled = ExtResource("7_2byph")
 stretch_mode = 3
 
 [node name="toggle_pause" type="TextureButton" parent="bottom_ui/MarginContainer/HBoxContainer"]
-process_mode = 3
 visible = false
 layout_mode = 2
 size_flags_horizontal = 3
@@ -206,7 +205,7 @@ bus = &"SFX"
 
 [connection signal="pressed" from="background/MarginContainer/texture_pause/MarginContainer/VBoxContainer/btnContinue" to="grid" method="_on_btn_continue_pressed"]
 [connection signal="pressed" from="background/MarginContainer/texture_pause/MarginContainer/VBoxContainer/btnOptions" to="grid" method="_on_btn_options_pressed"]
-[connection signal="pressed" from="background/MarginContainer/texture_pause/MarginContainer/VBoxContainer/btnRestart" to="grid" method="_on_btn_restart_pressed"]
+[connection signal="pressed" from="background/MarginContainer/texture_pause/MarginContainer/VBoxContainer/btnRestart" to="grid" method="_on_btn_options_2_pressed"]
 [connection signal="stop_game" from="top_ui" to="grid" method="_on_top_ui_stop_game"]
 [connection signal="stop_game" from="top_ui" to="countdown_timer" method="_on_top_ui_stop_game"]
 [connection signal="pressed" from="bottom_ui/MarginContainer/HBoxContainer/restart" to="grid" method="_on_restart_pressed"]

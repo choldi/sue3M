@@ -108,4 +108,11 @@ func get_vol(audio_src):
 	elif audio_src=="SFX":
 		return self.vol_sfx
 
-
+func restart_game():
+	var curr=GlobalVars.main_scene
+	var scene=load("res://scenes/game.tscn")
+	var parent=curr.get_parent()
+	curr.queue_free()
+	var scene_inst=scene.instantiate()
+	GlobalVars.main_scene=scene_inst
+	parent.add_child(scene_inst)	

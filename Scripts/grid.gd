@@ -29,6 +29,7 @@ var piece_two = null
 var last_place = Vector2(0,0)
 var last_direction = Vector2(0,0)
 
+
 #possible pieces to paint in board
 var all_type_pieces=[[
 	#preload("res://scenes/rainbow.tscn"),
@@ -39,7 +40,7 @@ var all_type_pieces=[[
 	preload("res://scenes/pink_piece.tscn"),
 	preload("res://scenes/yellow_piece.tscn")
 ],[
-		preload("res://scenes/circle.tscn"),
+	preload("res://scenes/circle.tscn"),
 	preload("res://scenes/diamond.tscn"),
 	preload("res://scenes/hexagon.tscn"),
 	preload("res://scenes/square.tscn"),
@@ -431,9 +432,9 @@ func destroy_pieces():
 
 
 func _on_destroy_timer_timeout():
-	pause_game=true
-	emit_signal("toggle_pause",pause_game)			
-	get_parent().get_node("bottom_ui/MarginContainer/HBoxContainer/toggle_pause").disabled=true			
+#	pause_game=true
+#	emit_signal("toggle_pause",pause_game)			
+#	get_parent().get_node("bottom_ui/MarginContainer/HBoxContainer/toggle_pause").disabled=true			
 	print("collection_to_delete:" + str(collections_to_delete))
 	var collection=[]
 	for i in range(collections_to_delete.size()):
@@ -540,9 +541,9 @@ func _on_recheck_timer_timeout():
 		state=move
 		streak=1
 		refill_bonus=1
-		pause_game=false
-		emit_signal("toggle_pause",pause_game)
-		get_parent().get_node("bottom_ui/MarginContainer/HBoxContainer/toggle_pause").disabled=false			
+#		pause_game=false
+#		emit_signal("toggle_pause",pause_game)
+#		get_parent().get_node("bottom_ui/MarginContainer/HBoxContainer/toggle_pause").disabled=false			
 
 
 func _on_countdown_timer_timeout():
@@ -578,10 +579,8 @@ func _on_toggle_pause_pressed():
 	print("pause toggle")
 	if pause_game:
 		pause_game=false
-		get_parent().get_node("background/MarginContainer/texture_pause").hide()
 	else:
 		pause_game=true
-		get_parent().get_node("background/MarginContainer/texture_pause").show()
 	emit_signal("toggle_pause",pause_game)
 	
 
@@ -593,7 +592,6 @@ func _on_game_over_restart_game():
 
 func _on_btn_continue_pressed():
 	pause_game=false
-	get_parent().get_node("background/MarginContainer/texture_pause").hide()
 	emit_signal("toggle_pause",pause_game)
 
 
@@ -604,3 +602,23 @@ func _on_btn_options_pressed():
 	var parent=curr.get_parent()
 	parent.remove_child(curr)
 	parent.add_child(ins_option)
+
+
+
+
+
+func _on_toggle_pause(ispaused):
+	if ispaused:
+		get_parent().get_node("background/MarginContainer/texture_pause").show()			
+	else:
+		get_parent().get_node("background/MarginContainer/texture_pause").hide()			
+	get_tree().paused=ispaused			
+		
+
+	pass # Replace with function body.
+
+
+func _on_btn_restart_pressed():
+	_on_btn_continue_pressed()
+	GlobalVars.restart_game()
+
