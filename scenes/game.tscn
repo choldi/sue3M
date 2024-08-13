@@ -213,6 +213,7 @@ bus = &"SFX"
 [connection signal="pressed" from="bottom_ui/MarginContainer/HBoxContainer/toggle_pause" to="grid" method="_on_toggle_pause_pressed"]
 [connection signal="check_hi_score" from="grid" to="top_ui" method="_on_grid_check_hi_score"]
 [connection signal="display_hi_score" from="grid" to="top_ui" method="_on_grid_display_hi_score"]
+[connection signal="pause_timer_collapse" from="grid" to="countdown_timer" method="_on_grid_pause_timer_collapse"]
 [connection signal="reset_score" from="grid" to="top_ui" method="_on_grid_reset_score"]
 [connection signal="reset_timer" from="grid" to="top_ui" method="_on_grid_reset_timer"]
 [connection signal="start_timer" from="grid" to="countdown_timer" method="_on_grid_start_timer"]

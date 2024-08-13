@@ -69,10 +69,12 @@ var refill_bonus=1
 signal update_timer
 signal reset_timer
 signal start_timer
+signal pause_timer_collapse
 
 
 var end_game=false
 var pause_game=false
+var pause_timer=false
 
 signal toggle_pause
 
@@ -92,6 +94,7 @@ func start():
 	get_parent().get_node("GameOver").hide()
 	var hi=GlobalVars.load_hiscore()
 	emit_signal("display_hi_score",int(hi))
+	pause_timer=false
 # Called when the node enters the scene tree for the first time.
 func _ready():
 	width=GlobalVars.width
@@ -432,6 +435,8 @@ func destroy_pieces():
 
 
 func _on_destroy_timer_timeout():
+	pause_timer=true
+	emit_signal("pause_timer_collapse",pause_timer)
 #	pause_game=true
 #	emit_signal("toggle_pause",pause_game)			
 #	get_parent().get_node("bottom_ui/MarginContainer/HBoxContainer/toggle_pause").disabled=true			
@@ -541,6 +546,8 @@ func _on_recheck_timer_timeout():
 		state=move
 		streak=1
 		refill_bonus=1
+		pause_timer=false
+		emit_signal("pause_timer_collapse",pause_timer)
 #		pause_game=false
 #		emit_signal("toggle_pause",pause_game)
 #		get_parent().get_node("bottom_ui/MarginContainer/HBoxContainer/toggle_pause").disabled=false			

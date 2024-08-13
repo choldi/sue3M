@@ -29,3 +29,11 @@ func _on_grid_reset_timer():
 
 func _on_grid_start_timer():
 	self.start()
+
+
+func _on_grid_pause_timer_collapse(pause):
+	if pause:
+		self.stop()
+	else:
+		self.start()
+	pass # Replace with function body.
