@@ -73,6 +73,40 @@ theme_override_fonts/font = ExtResource("4_owegl")
 theme_override_font_sizes/font_size = 30
 text = "Restart"
 
+[node name="margin_nomoves" type="MarginContainer" parent="background/MarginContainer"]
+process_mode = 3
+visible = false
+z_index = 50
+z_as_relative = false
+layout_mode = 2
+theme_override_constants/margin_left = 10
+theme_override_constants/margin_top = 150
+theme_override_constants/margin_right = 10
+theme_override_constants/margin_bottom = 200
+
+[node name="ColorRect" type="ColorRect" parent="background/MarginContainer/margin_nomoves"]
+layout_mode = 2
+color = Color(0, 0, 0, 1)
+
+[node name="Label" type="Label" parent="background/MarginContainer/margin_nomoves/ColorRect"]
+layout_mode = 1
+anchors_preset = 8
+anchor_left = 0.5
+anchor_top = 0.5
+anchor_right = 0.5
+anchor_bottom = 0.5
+offset_left = -153.5
+offset_top = -41.5
+offset_right = 153.5
+offset_bottom = 41.5
+grow_horizontal = 2
+grow_vertical = 2
+theme_override_font_sizes/font_size = 60
+text = "No moves!
+Generate new grid"
+horizontal_alignment = 1
+vertical_alignment = 1
+
 [node name="top_ui" parent="." instance=ExtResource("3_jepto")]
 
 [node name="bottom_ui" parent="." instance=ExtResource("4_ann06")]
@@ -204,6 +238,14 @@ bus = &"Music"
 [node name="asp_sfx" type="AudioStreamPlayer" parent="."]
 bus = &"SFX"
 
+[node name="nomoves_timer" type="Timer" parent="."]
+wait_time = 0.2
+one_shot = true
+
+[node name="nomoves_cont_timer" type="Timer" parent="."]
+wait_time = 3.0
+one_shot = true
+
 [connection signal="pressed" from="background/MarginContainer/texture_pause/MarginContainer/VBoxContainer/btnContinue" to="grid" method="_on_btn_continue_pressed"]
 [connection signal="pressed" from="background/MarginContainer/texture_pause/MarginContainer/VBoxContainer/btnOptions" to="grid" method="_on_btn_options_pressed"]
 [connection signal="pressed" from="background/MarginContainer/texture_pause/MarginContainer/VBoxContainer/btnRestart" to="grid" method="_on_btn_restart_pressed"]
@@ -229,3 +271,5 @@ bus = &"SFX"
 [connection signal="timeout" from="refill_timer" to="grid" method="_on_refill_timer_timeout"]
 [connection signal="timeout" from="recheck_timer" to="grid" method="_on_recheck_timer_timeout"]
 [connection signal="timeout" from="countdown_timer" to="grid" method="_on_countdown_timer_timeout"]
+[connection signal="timeout" from="nomoves_timer" to="grid" method="_on_nomoves_timer_timeout"]
+[connection signal="timeout" from="nomoves_cont_timer" to="grid" method="_on_nomoves_cont_timer_timeout"]

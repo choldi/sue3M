@@ -85,7 +85,7 @@ func load_hiscore():
 		var file = FileAccess.open(score_file,FileAccess.READ)
 		content = file.get_as_text()
 	else:
-		save_hiscore("000000")
+		save_hiscore("0000000")
 	return content
 
 

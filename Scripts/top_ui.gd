@@ -18,9 +18,9 @@ func _process(delta):
 func _on_grid_update_score(amount_to_change):
 	var score=score_label.text.to_int()
 	score+=amount_to_change
-	if score > 999999:
-		score = score - 999999
-	score_label.text = "%06d" % score
+	if score > 9999999:
+		score = score - 9999999
+	score_label.text = "%07d" % score
 	
 	
 	pass # Replace with function body.
@@ -44,7 +44,7 @@ func _on_grid_update_timer(delta):
 
 func _on_grid_reset_score():
 	var score=0
-	score_label.text = "%06d" % score
+	score_label.text = "%07d" % score
 
 
 func _on_grid_reset_timer():
@@ -55,7 +55,7 @@ func _on_grid_reset_timer():
 
 
 func _on_grid_display_hi_score(hi_score):
-	hi_points.text = "%06d" % hi_score
+	hi_points.text = "%07d" % hi_score
 
 
 func _on_grid_check_hi_score():
