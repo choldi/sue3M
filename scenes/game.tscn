@@ -1,4 +1,4 @@
-[gd_scene load_steps=16 format=3 uid="uid://dpyutm6qgghm0"]
+[gd_scene load_steps=18 format=3 uid="uid://dpyutm6qgghm0"]
 
 [ext_resource type="PackedScene" uid="uid://bgmokkhk5v0no" path="res://scenes/global_vars.tscn" id="1_1kmu6"]
 [ext_resource type="Texture2D" uid="uid://hpw3h18e2h8u" path="res://Assets/art/background1.png" id="1_550sj"]
@@ -9,7 +9,9 @@
 [ext_resource type="FontFile" uid="uid://c63i7ou76l030" path="res://Assets/Fonts/Kenney Future.ttf" id="4_owegl"]
 [ext_resource type="Texture2D" uid="uid://bqpt2tojnkpsa" path="res://Assets/Buttons/pause_btn.png" id="5_qlf6v"]
 [ext_resource type="Script" path="res://Scripts/countdown_timer.gd" id="6_4iyjr"]
+[ext_resource type="Texture2D" uid="uid://27bp2b2ebknd" path="res://Assets/art/postbottom_ui.png" id="6_vb8pl"]
 [ext_resource type="Texture2D" uid="uid://cytj24goo1r5y" path="res://Assets/Buttons/restart_gray_btn.png" id="7_2byph"]
+[ext_resource type="Script" path="res://Scripts/prebottom_ui.gd" id="7_ab7k1"]
 [ext_resource type="Script" path="res://Scripts/toggle_pause.gd" id="7_asccg"]
 [ext_resource type="Texture2D" uid="uid://dbq1lhxt3y50v" path="res://Assets/Buttons/restart_btn.png" id="7_eyest"]
 [ext_resource type="Texture2D" uid="uid://b2hq0ed4nrtiw" path="res://Assets/Buttons/pause_gray_btn.png" id="9_ko7wg"]
@@ -108,6 +110,35 @@ horizontal_alignment = 1
 vertical_alignment = 1
 
 [node name="top_ui" parent="." instance=ExtResource("3_jepto")]
+
+[node name="prebottom_ui" type="TextureRect" parent="."]
+offset_top = 870.0
+offset_right = 576.0
+offset_bottom = 930.0
+texture = ExtResource("6_vb8pl")
+script = ExtResource("7_ab7k1")
+
+[node name="MarginContainer" type="MarginContainer" parent="prebottom_ui"]
+layout_mode = 0
+offset_right = 568.0
+offset_bottom = 56.0
+theme_override_constants/margin_left = 10
+theme_override_constants/margin_right = 10
+
+[node name="lblscore" type="Label" parent="prebottom_ui/MarginContainer"]
+layout_mode = 2
+size_flags_horizontal = 0
+theme_override_fonts/font = ExtResource("4_owegl")
+theme_override_font_sizes/font_size = 20
+text = "0000000"
+
+[node name="lblhi" type="Label" parent="prebottom_ui/MarginContainer"]
+layout_mode = 2
+size_flags_horizontal = 8
+theme_override_fonts/font = ExtResource("4_owegl")
+theme_override_font_sizes/font_size = 20
+text = "0000000
+"
 
 [node name="bottom_ui" parent="." instance=ExtResource("4_ann06")]
 expand_mode = 2
@@ -251,10 +282,12 @@ one_shot = true
 [connection signal="pressed" from="background/MarginContainer/texture_pause/MarginContainer/VBoxContainer/btnRestart" to="grid" method="_on_btn_restart_pressed"]
 [connection signal="stop_game" from="top_ui" to="grid" method="_on_top_ui_stop_game"]
 [connection signal="stop_game" from="top_ui" to="countdown_timer" method="_on_top_ui_stop_game"]
+[connection signal="update_hi_bottom" from="top_ui" to="prebottom_ui" method="_on_top_ui_update_hi_bottom"]
 [connection signal="pressed" from="bottom_ui/MarginContainer/HBoxContainer/restart" to="grid" method="_on_restart_pressed"]
 [connection signal="pressed" from="bottom_ui/MarginContainer/HBoxContainer/toggle_pause" to="grid" method="_on_toggle_pause_pressed"]
 [connection signal="check_hi_score" from="grid" to="top_ui" method="_on_grid_check_hi_score"]
-[connection signal="display_hi_score" from="grid" to="top_ui" method="_on_grid_display_hi_score"]
+[connection signal="display_hi_pieces" from="grid" to="top_ui" method="_on_grid_display_hi_pieces"]
+[connection signal="display_hi_score" from="grid" to="prebottom_ui" method="_on_grid_display_hi_score"]
 [connection signal="pause_timer_collapse" from="grid" to="countdown_timer" method="_on_grid_pause_timer_collapse"]
 [connection signal="reset_score" from="grid" to="top_ui" method="_on_grid_reset_score"]
 [connection signal="reset_timer" from="grid" to="top_ui" method="_on_grid_reset_timer"]
@@ -262,7 +295,8 @@ one_shot = true
 [connection signal="toggle_pause" from="grid" to="bottom_ui/MarginContainer/HBoxContainer/toggle_pause" method="_on_grid_toggle_pause"]
 [connection signal="toggle_pause" from="grid" to="grid" method="_on_toggle_pause"]
 [connection signal="toggle_pause" from="grid" to="countdown_timer" method="_on_grid_toggle_pause"]
-[connection signal="update_score" from="grid" to="top_ui" method="_on_grid_update_score"]
+[connection signal="update_pieces" from="grid" to="top_ui" method="_on_grid_update_pieces"]
+[connection signal="update_score" from="grid" to="prebottom_ui" method="_on_grid_update_score"]
 [connection signal="update_timer" from="grid" to="top_ui" method="_on_grid_update_timer"]
 [connection signal="restart_game" from="GameOver" to="grid" method="_on_game_over_restart_game"]
 [connection signal="pressed" from="GameOver/TextureRect/VBoxContainer/btn_restart" to="GameOver" method="_on_btn_restart_pressed"]

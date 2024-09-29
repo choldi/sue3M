@@ -60,8 +60,10 @@ var possible_pieces
 
 #score variable
 signal update_score
+signal update_pieces
 signal reset_score
 signal display_hi_score
+signal display_hi_pieces
 signal check_hi_score
 
 
@@ -98,8 +100,10 @@ func start():
 	#get_parent().get_node("background/MarginContainer/margin_nomoves").hide()
 			
 	get_parent().get_node("GameOver").hide()
-	var hi=GlobalVars.load_hiscore()
+	var hi=GlobalVars.max_score
 	emit_signal("display_hi_score",int(hi))
+	var hi_pieces=GlobalVars.max_pieces
+	emit_signal("display_hi_pieces",int(hi_pieces))
 	pause_timer=false
 # Called when the node enters the scene tree for the first time.
 func _ready():
@@ -638,18 +642,25 @@ func _on_destroy_timer_timeout():
 		if pieces_removed>3:
 			score=score+100*(pieces_removed-3)
 		emit_signal("update_score",score)
+		emit_signal("update_pieces",pieces_removed)
 		var center=get_central_coordinate(collection[i])
 		var pos=grid_to_pixel(center.x,center.y)
 		var lbl_score=label.instantiate()
 		add_child(lbl_score)
 		lbl_score.move_up(pos,Color.WHITE_SMOKE,str(score))
 		streak+=1
-		if pieces_removed>=GlobalVars.min_piece_for_bonus:
+		if pieces_removed>=GlobalVars.min_piece_for_bonus and pieces_removed<GlobalVars.min_piece_extra_bonus:
 			emit_signal("update_timer",GlobalVars.num_bonus_seconds)
 			var lbl_timer=label.instantiate()
 			add_child(lbl_timer)
 			pos=grid_to_pixel(3,10)
 			lbl_timer.move_up(pos,Color.INDIGO,"+" + str(GlobalVars.num_bonus_seconds) + " s")
+		if pieces_removed>=GlobalVars.min_piece_extra_bonus:
+			emit_signal("update_timer",GlobalVars.num_bonus_extra_seconds)
+			var lbl_timer=label.instantiate()
+			add_child(lbl_timer)
+			pos=grid_to_pixel(3,10)
+			lbl_timer.move_up(pos,Color.INDIGO,"+" + str(GlobalVars.num_bonus_extra_seconds) + " s")
 			
 			
 

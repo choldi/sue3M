@@ -1,10 +1,12 @@
 extends TextureRect
 
 signal stop_game
+signal update_hi_bottom
 
 @onready var score_label=$MarginContainer/HBoxContainer/ScoreLabel
 @onready var time_label=$MarginContainer/HBoxContainer/TimeLabel
 @onready var hi_points=$MarginContainer/HBoxContainer/HiScore/hi_points
+
 # Called when the node enters the scene tree for the first time.
 func _ready():
 	pass # Replace with function body.
@@ -13,17 +15,6 @@ func _ready():
 # Called every frame. 'delta' is the elapsed time since the previous frame.
 func _process(delta):
 	pass
-
-
-func _on_grid_update_score(amount_to_change):
-	var score=score_label.text.to_int()
-	score+=amount_to_change
-	if score > 9999999:
-		score = score - 9999999
-	score_label.text = "%07d" % score
-	
-	
-	pass # Replace with function body.
 
 
 func _on_grid_update_timer(delta):
@@ -40,6 +31,7 @@ func _on_grid_update_timer(delta):
 	if seconds<=0:
 		emit_signal("stop_game")
 	
+	
 
 
 func _on_grid_reset_score():
@@ -53,14 +45,24 @@ func _on_grid_reset_timer():
 	time_label.text="%d:%02d" % [start_minutes,start_seconds]
 	pass # Replace with function body.
 
-
-func _on_grid_display_hi_score(hi_score):
-	hi_points.text = "%07d" % hi_score
-
-
+	
 func _on_grid_check_hi_score():
 	var hi_num=int(hi_points.text)
 	var score=int(score_label.text)
 	if score>hi_num:
-		GlobalVars.save_hiscore(score_label.text)
+		GlobalVars.max_pieces=score_label.text
+		GlobalVars.save_config()
 		hi_points.text=score_label.text
+	emit_signal("update_hi_bottom")
+
+func _on_grid_update_pieces(amount_to_change):
+	var score=score_label.text.to_int()
+	score+=amount_to_change
+	if score > 9999999:
+		score = score - 9999999
+	score_label.text = "%07d" % score
+	pass # Replace with function body.
+
+
+func _on_grid_display_hi_pieces(hi_pieces):
+	hi_points.text = "%07d" % hi_pieces

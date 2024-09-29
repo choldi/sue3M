@@ -14,11 +14,14 @@ var vol_mixer:float
 var vol_music:float
 var vol_sfx:float
 var max_score:int
+var max_pieces:int
 var last_scene
 var grid_scene
 var main_scene
 var num_bonus_seconds:int
 var min_piece_for_bonus:int
+var min_piece_extra_bonus
+var num_bonus_extra_seconds
 var piece_type:int
 # Called when the node enters the scene tree for the first time.
 func _ready():
@@ -28,12 +31,14 @@ func _ready():
 	y_start=800
 	offset=64
 	y_offset=2
-	start_minutes=3
-	start_seconds=0
+	start_minutes=0
+	start_seconds=15
 	score_file="user://scoresave.cfg"
 	config_file="user://sue3m.cfg"
 	num_bonus_seconds=10
 	min_piece_for_bonus=6
+	min_piece_extra_bonus=9
+	num_bonus_extra_seconds=60
 	piece_type=0
 	
 	
@@ -45,16 +50,18 @@ func _ready():
 		config.set_value("VOLUME","Music",0.5)
 		config.set_value("VOLUME","SFX",0.5)
 		config.set_value("SCORE","HI_SCORE",0)
+		config.set_value("SCORE","HI_PIECES",0)
 		config.save(config_file)
 	else:
 		vol_mixer=float(config.get_value("VOLUME","Master"))
 		vol_music=float(config.get_value("VOLUME","Music"))
 		vol_sfx=float(config.get_value("VOLUME","SFX"))
-		max_score=int(config.get_value("SCORE","HI_SCORE"))
+		max_score=int(config.get_value("SCORE","HI_SCORE",0))
+		max_pieces=int(config.get_value("SCORE","HI_PIECES",0))
 	set_vol("Master",vol_mixer)
 	set_vol("Music",vol_music)
 	set_vol("SFX",vol_sfx)
-	load_hiscore()
+	#load_hiscore()
 	pass # Replace with function body.
 
 func save_config():
@@ -63,6 +70,7 @@ func save_config():
 	config.set_value("VOLUME","Music",vol_music)
 	config.set_value("VOLUME","SFX",vol_sfx)
 	config.set_value("SCORE","HI_SCORE",max_score)
+	config.set_value("SCORE","HI_PIECES",max_pieces)
 	config.save(config_file)
 
 
