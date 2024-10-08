@@ -23,6 +23,7 @@ var min_piece_for_bonus:int
 var min_piece_extra_bonus
 var num_bonus_extra_seconds
 var piece_type:int
+var previous_position=null
 # Called when the node enters the scene tree for the first time.
 func _ready():
 	width=8
@@ -31,8 +32,8 @@ func _ready():
 	y_start=800
 	offset=64
 	y_offset=2
-	start_minutes=0
-	start_seconds=15
+	start_minutes=3
+	start_seconds=0
 	score_file="user://scoresave.cfg"
 	config_file="user://sue3m.cfg"
 	num_bonus_seconds=10

@@ -66,3 +66,15 @@ func _on_grid_update_pieces(amount_to_change):
 
 func _on_grid_display_hi_pieces(hi_pieces):
 	hi_points.text = "%07d" % hi_pieces
+
+func get_time():
+	return time_label.text
+
+func get_score():
+	return score_label.text
+
+func set_time(time):
+	time_label.text=time
+
+func set_score(score):
+	score_label.text=score

@@ -1,4 +1,4 @@
-[gd_scene load_steps=18 format=3 uid="uid://dpyutm6qgghm0"]
+[gd_scene load_steps=19 format=3 uid="uid://dpyutm6qgghm0"]
 
 [ext_resource type="PackedScene" uid="uid://bgmokkhk5v0no" path="res://scenes/global_vars.tscn" id="1_1kmu6"]
 [ext_resource type="Texture2D" uid="uid://hpw3h18e2h8u" path="res://Assets/art/background1.png" id="1_550sj"]
@@ -14,6 +14,7 @@
 [ext_resource type="Script" path="res://Scripts/prebottom_ui.gd" id="7_ab7k1"]
 [ext_resource type="Script" path="res://Scripts/toggle_pause.gd" id="7_asccg"]
 [ext_resource type="Texture2D" uid="uid://dbq1lhxt3y50v" path="res://Assets/Buttons/restart_btn.png" id="7_eyest"]
+[ext_resource type="Texture2D" uid="uid://bicspead6oenv" path="res://Assets/Buttons/rewind2_btn.png" id="9_85qeh"]
 [ext_resource type="Texture2D" uid="uid://b2hq0ed4nrtiw" path="res://Assets/Buttons/pause_gray_btn.png" id="9_ko7wg"]
 [ext_resource type="Script" path="res://Scripts/GameOver.gd" id="10_r2dwh"]
 [ext_resource type="AudioStream" uid="uid://bpjaui36g4csa" path="res://Assets/audio/music/Warfare-chosic.com_.mp3" id="14_rwjid"]
@@ -109,6 +110,40 @@ Generate new grid"
 horizontal_alignment = 1
 vertical_alignment = 1
 
+[node name="margin_rewind" type="MarginContainer" parent="background/MarginContainer"]
+process_mode = 3
+visible = false
+z_index = 50
+z_as_relative = false
+layout_mode = 2
+theme_override_constants/margin_left = 10
+theme_override_constants/margin_top = 150
+theme_override_constants/margin_right = 10
+theme_override_constants/margin_bottom = 200
+
+[node name="ColorRect" type="ColorRect" parent="background/MarginContainer/margin_rewind"]
+layout_mode = 2
+color = Color(0, 0, 0, 1)
+
+[node name="Label" type="Label" parent="background/MarginContainer/margin_rewind/ColorRect"]
+layout_mode = 1
+anchors_preset = 8
+anchor_left = 0.5
+anchor_top = 0.5
+anchor_right = 0.5
+anchor_bottom = 0.5
+offset_left = -153.5
+offset_top = -41.5
+offset_right = 153.5
+offset_bottom = 41.5
+grow_horizontal = 2
+grow_vertical = 2
+theme_override_font_sizes/font_size = 60
+text = "Moving back...
+Regenerating grid"
+horizontal_alignment = 1
+vertical_alignment = 1
+
 [node name="top_ui" parent="." instance=ExtResource("3_jepto")]
 
 [node name="prebottom_ui" type="TextureRect" parent="."]
@@ -164,9 +199,10 @@ layout_mode = 2
 size_flags_horizontal = 3
 stretch_mode = 3
 
-[node name="TextureButton3" type="TextureButton" parent="bottom_ui/MarginContainer/HBoxContainer"]
+[node name="rewind" type="TextureButton" parent="bottom_ui/MarginContainer/HBoxContainer"]
 layout_mode = 2
 size_flags_horizontal = 3
+texture_normal = ExtResource("9_85qeh")
 stretch_mode = 0
 
 [node name="restart" type="TextureButton" parent="bottom_ui/MarginContainer/HBoxContainer"]
@@ -273,7 +309,17 @@ bus = &"SFX"
 wait_time = 0.2
 one_shot = true
 
+[node name="rewind_timer" type="Timer" parent="."]
+process_mode = 3
+wait_time = 0.2
+one_shot = true
+
 [node name="nomoves_cont_timer" type="Timer" parent="."]
+wait_time = 3.0
+one_shot = true
+
+[node name="rewind_cont_timer" type="Timer" parent="."]
+process_mode = 3
 wait_time = 3.0
 one_shot = true
 
@@ -283,6 +329,7 @@ one_shot = true
 [connection signal="stop_game" from="top_ui" to="grid" method="_on_top_ui_stop_game"]
 [connection signal="stop_game" from="top_ui" to="countdown_timer" method="_on_top_ui_stop_game"]
 [connection signal="update_hi_bottom" from="top_ui" to="prebottom_ui" method="_on_top_ui_update_hi_bottom"]
+[connection signal="pressed" from="bottom_ui/MarginContainer/HBoxContainer/rewind" to="grid" method="_on_rewind_pressed"]
 [connection signal="pressed" from="bottom_ui/MarginContainer/HBoxContainer/restart" to="grid" method="_on_restart_pressed"]
 [connection signal="pressed" from="bottom_ui/MarginContainer/HBoxContainer/toggle_pause" to="grid" method="_on_toggle_pause_pressed"]
 [connection signal="check_hi_score" from="grid" to="top_ui" method="_on_grid_check_hi_score"]
@@ -306,4 +353,6 @@ one_shot = true
 [connection signal="timeout" from="recheck_timer" to="grid" method="_on_recheck_timer_timeout"]
 [connection signal="timeout" from="countdown_timer" to="grid" method="_on_countdown_timer_timeout"]
 [connection signal="timeout" from="nomoves_timer" to="grid" method="_on_nomoves_timer_timeout"]
+[connection signal="timeout" from="rewind_timer" to="grid" method="_on_rewind_timer_timeout"]
 [connection signal="timeout" from="nomoves_cont_timer" to="grid" method="_on_nomoves_cont_timer_timeout"]
+[connection signal="timeout" from="rewind_cont_timer" to="grid" method="_on_rewind_cont_timer_timeout"]

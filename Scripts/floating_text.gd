@@ -4,8 +4,8 @@ var display:String
 var color:Color
 var pos:Vector2
 var tween:Tween
-var distance:int=50
-var duration:float=0.25
+var distance:int=90
+var duration:float=0.75
 var dest_node
 # Called when the node enters the scene tree for the first time.
 func _ready():

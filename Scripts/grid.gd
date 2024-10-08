@@ -52,6 +52,10 @@ var all_type_pieces=[[
 ]]
 var possible_pieces
 
+var piece_types = { "blue":0,"green":1,"light_green":2,"orange":3,"pink":4,"yellow":5,
+			   "circle":0,"diamond":1,"hexagon":2,"square":3,"star":5,"triangle":5}
+
+
 @onready var snd_destroy=preload("res://Assets/audio/effects/collapse-47652.mp3")
 @onready var snd_addtime=preload("res://Assets/audio/effects/collect-points-190037.mp3")
 @onready var direct_sound=preload("res://scenes/asp_direct.tscn")
@@ -127,6 +131,17 @@ func make_2d_array():
 		for j in height:
 			array[i].append(null)
 	return array
+
+func store_pieces(array_in):
+	var array_out=make_2d_array()
+	for i in width:
+		for j in height:
+			var type_piece=array_in[i][j].color
+			array_out[i][j]=type_piece
+	return array_out
+
+	
+
 
 func grid_to_pixel(column,row):
 	var new_x= x_start + offset*column
@@ -536,6 +551,14 @@ func is_in_grid(column,row):
 
 func swap_pieces(column,row,direction):
 	collections_to_delete=[]
+	var top_ui = get_parent().get_node("top_ui")
+	var prebottom_ui = get_parent().get_node("prebottom_ui/MarginContainer/lblscore")		
+	var previous_position={"time":top_ui.get_time(),
+						   "movements":top_ui.get_score(),
+						   "score":prebottom_ui.text,
+						   "grid":store_pieces(all_pieces)
+						  }
+
 	var first_piece = all_pieces[column][row]
 	var other_piece = all_pieces[column + direction.x][row + direction.y]
 	if first_piece != null && other_piece != null:
@@ -549,6 +572,7 @@ func swap_pieces(column,row,direction):
 		var second_elem_chk=find_match(column + direction.x, row + direction.y)	
 		print_match_grid()
 		if first_elem_chk || second_elem_chk:
+			GlobalVars.previous_position= previous_position
 			get_parent().get_node("destroy_timer").start()
 		else:
 			# wait 0.8 seconds
@@ -565,6 +589,7 @@ func swap_back():
 	print("swap back")
 		
 func touch_difference(grid_1,grid_2):
+			
 	var difference = grid_2 - grid_1
 	if abs(difference.x)>abs(difference.y):
 		if difference.x > 0:
@@ -647,7 +672,7 @@ func _on_destroy_timer_timeout():
 		var pos=grid_to_pixel(center.x,center.y)
 		var lbl_score=label.instantiate()
 		add_child(lbl_score)
-		lbl_score.move_up(pos,Color.WHITE_SMOKE,str(score))
+		lbl_score.move_up(pos,Color.WHITE_SMOKE,str(pieces_removed))
 		streak+=1
 		if pieces_removed>=GlobalVars.min_piece_for_bonus and pieces_removed<GlobalVars.min_piece_extra_bonus:
 			emit_signal("update_timer",GlobalVars.num_bonus_seconds)
@@ -742,6 +767,7 @@ func _on_recheck_timer_timeout():
 		else:
 			pause_timer=false
 			emit_signal("pause_timer_collapse",pause_timer)
+		print(all_pieces)
 
 			
 						
@@ -846,3 +872,47 @@ func _on_nomoves_cont_timer_timeout():
 	get_parent().get_node("background/MarginContainer/margin_nomoves").hide()
 	pause_timer=false
 	emit_signal("pause_timer_collapse",pause_timer)
+
+func _on_rewind_timer_timeout():
+	get_parent().get_node("background/MarginContainer/margin_rewind").show()
+	get_parent().get_node("rewind_cont_timer").start()
+
+
+func _on_rewind_cont_timer_timeout():
+	destroy_pieces()
+	all_matches=make_2d_array()
+	var top_ui = get_parent().get_node("top_ui")
+	var prebottom_ui = get_parent().get_node("prebottom_ui/MarginContainer/lblscore")		
+	var previous_position=GlobalVars.previous_position
+	var all_pieces_obj=previous_position["grid"]
+	top_ui.set_score(previous_position["movements"])
+	top_ui.set_time(previous_position["time"])
+	prebottom_ui.text=previous_position["score"]
+	
+						#{"time":top_ui.get_time(),
+						   #"movements":top_ui.get_score(),
+						   #"score":prebottom_ui.text,
+						   #"grid":all_pieces.duplicate(true)
+						  #}
+
+
+	draw_pieces(all_pieces_obj)
+	get_parent().get_node("background/MarginContainer/margin_rewind").hide()
+	get_tree().paused=false
+
+func draw_pieces(obj):
+	print(obj)
+	for i in width:
+		for j in height:
+			var piece_name = obj[i][j]
+			var piece_type = piece_types[piece_name]
+			var piece=possible_pieces[piece_type].instantiate()
+			all_pieces[i][j]=piece
+			add_child(piece)
+			piece.position=grid_to_pixel(i,j)
+
+
+func _on_rewind_pressed():
+	if GlobalVars.previous_position!=null:
+		get_tree().paused=true
+		get_parent().get_node("rewind_timer").start()
