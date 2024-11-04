@@ -105,6 +105,7 @@ func start():
 	state=move
 	end_game=false
 	pause_game=false
+	destroy_button=false
 	emit_signal("reset_score")
 	emit_signal("reset_timer")
 	emit_signal("start_timer")
@@ -634,7 +635,19 @@ func touch_input():
 		if is_in_grid(pos.x,pos.y):
 			#all_matches=make_2d_array()
 			#find_match(pos.x,pos.y)
-			controlling=true
+			if destroy_button:
+				var col_destroy=all_pieces[pos.x][pos.y].color
+				destroy_pieces_color(col_destroy)
+				pause_timer=true
+				destroy_button=false
+				var btn=get_parent().get_node("bottom_ui/MarginContainer/HBoxContainer/btn_destroy")
+#	var btn2=get_parent().get_node("bottom_ui/MarginContainer/HBoxContainer/btn_empty")
+				btn.disabled=false
+				btn.visible=false
+				emit_signal("pause_timer_collapse",pause_timer)
+				get_parent().get_node("collapse_timer").start()				
+			else:
+				controlling=true
 		else:
 			print ("off the grid")
 	if Input.is_action_just_released("ui_touch"):
@@ -664,7 +677,14 @@ func destroy_pieces():
 				all_pieces[i][j].queue_free()
 				all_pieces[i][j]=null
 
-
+func destroy_pieces_color(color):
+	for i in width:
+		for j in height:
+			if all_pieces[i][j]!= null:
+				if all_pieces[i][j].color==color:
+					all_pieces[i][j].queue_free()
+					all_pieces[i][j]=null
+	
 func _on_destroy_timer_timeout():
 	pause_timer=true
 	emit_signal("pause_timer_collapse",pause_timer)
@@ -1022,6 +1042,7 @@ func _on_btn_destroy_pressed() -> void:
 	var btn=get_parent().get_node("bottom_ui/MarginContainer/HBoxContainer/btn_destroy")
 #	var btn2=get_parent().get_node("bottom_ui/MarginContainer/HBoxContainer/btn_empty")
 	btn.disabled=true
+	destroy_button=true
 #	btn2.visible=false
 	
 	pass # Replace with function body.
