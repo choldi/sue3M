@@ -85,8 +85,17 @@ signal pause_timer_collapse
 var end_game=false
 var pause_game=false
 var pause_timer=false
+var destroy_button=false
 
 signal toggle_pause
+
+func _notification(what):
+	if what == MainLoop.NOTIFICATION_APPLICATION_FOCUS_IN:
+		print("Focused!")
+		load_status() 
+	elif what == MainLoop.NOTIFICATION_APPLICATION_FOCUS_OUT:
+		print("Unfocused!")
+		save_status()
 
 func start():
 	
@@ -110,6 +119,15 @@ func start():
 	emit_signal("display_hi_pieces",int(hi_pieces))
 	pause_timer=false
 # Called when the node enters the scene tree for the first time.
+func continue_game():
+	all_pieces=make_2d_array()	
+	all_matches=make_2d_array()
+	pause_timer=false
+	state=move
+	end_game=false
+	pause_game=false
+	load_status()
+	
 func _ready():
 	width=GlobalVars.width
 	height=GlobalVars.height
@@ -120,9 +138,14 @@ func _ready():
 #	self is grid, parent is game
 	GlobalVars.main_scene=self.get_parent() 
 	possible_pieces=all_type_pieces[GlobalVars.piece_type]
+	
+	var fname=GlobalVars.status_file
+	if FileAccess.file_exists(fname):
+		continue_game()
+	else:
+		start()
 
 #	GlobalVars.main_scene=self
-	start()
 			
 func make_2d_array():
 	var array = []
@@ -686,10 +709,22 @@ func _on_destroy_timer_timeout():
 			add_child(lbl_timer)
 			pos=grid_to_pixel(3,10)
 			lbl_timer.move_up(pos,Color.INDIGO,"+" + str(GlobalVars.num_bonus_extra_seconds) + " s")
-			
-			
-
-
+		if pieces_removed==4:
+			var pieces=collection[i]
+			var is_line_col=true
+			var is_line_row=true
+			var piece=pieces[0]
+			var col=piece[0]
+			var row=piece[1]
+			for x in pieces.size():
+				var piece_line=pieces[x]
+				if  piece_line[0] != col:
+					is_line_col=false	
+				if piece_line[1] != row:
+					is_line_row=false
+			if is_line_col || is_line_row:
+				print ("linea recta")
+				show_destroy_button()
 
 
 		if collection[i].size()>5:
@@ -901,6 +936,7 @@ func _on_rewind_cont_timer_timeout():
 	get_tree().paused=false
 
 func draw_pieces(obj):
+	print("draw pieces")
 	print(obj)
 	for i in width:
 		for j in height:
@@ -916,3 +952,76 @@ func _on_rewind_pressed():
 	if GlobalVars.previous_position!=null:
 		get_tree().paused=true
 		get_parent().get_node("rewind_timer").start()
+
+func save_status():
+	var top_ui = get_parent().get_node("top_ui")
+	var prebottom_ui = get_parent().get_node("prebottom_ui/MarginContainer/lblscore")		
+	var fname=GlobalVars.status_file
+	var stime=top_ui.get_time()
+	var smov=top_ui.get_score()
+	var sscor=prebottom_ui.text
+	var sgrid=store_pieces(all_pieces)
+	DirAccess.remove_absolute(fname)
+	var config = ConfigFile.new()
+	config.set_value("VALUES","TIME",stime)
+	config.set_value("VALUES","MOVES",smov)
+	config.set_value("VALUES","SCORE",sscor)
+	var sname="PIECE{i},{j}"
+	for i in width:
+		for j in height:
+			var piece_name = all_pieces[i][j]
+			var color=piece_name.color
+			var piece_type = piece_types[piece_name.color]
+			var sname2=sname.format({"i":i,"j":j})
+			config.set_value("PIECES",sname2,color)
+				
+	config.save(fname)
+	
+func load_status():
+	get_parent().get_node("load_status_timer").start()
+	pass
+	
+
+
+
+func _on_load_status_timer_timeout():
+	print("load status")
+	var top_ui = get_parent().get_node("top_ui")
+	var prebottom_ui = get_parent().get_node("prebottom_ui/MarginContainer/lblscore")		
+	var fname=GlobalVars.status_file
+	var config = ConfigFile.new()
+	var err = config.load(fname) 
+	if err == OK: 
+		var stime=config.get_value("VALUES","TIME")	
+		var smov=config.get_value("VALUES","MOVES")
+		var sscor=config.get_value("VALUES","SCORE")
+		top_ui.set_time(stime)
+		top_ui.set_score(sscor)
+		prebottom_ui.text=sscor
+		var sname="PIECE{i},{j}"
+		var load_array=make_2d_array()
+		for i in width:
+			for j in height:
+				var sname2=sname.format({"i":i,"j":j})
+				var color=config.get_value("PIECES",sname2)
+				load_array[i][j]=color
+		destroy_pieces()
+		draw_pieces(load_array)
+	DirAccess.remove_absolute(fname)
+	pass # Replace with function body.
+
+func show_destroy_button() -> void:
+	var btn=get_parent().get_node("bottom_ui/MarginContainer/HBoxContainer/btn_destroy")
+	var btn2=get_parent().get_node("bottom_ui/MarginContainer/HBoxContainer/btn_empty")
+	btn.visible=true
+	btn2.visible=false
+	
+	pass # Replace with function body.
+
+func _on_btn_destroy_pressed() -> void:
+	var btn=get_parent().get_node("bottom_ui/MarginContainer/HBoxContainer/btn_destroy")
+#	var btn2=get_parent().get_node("bottom_ui/MarginContainer/HBoxContainer/btn_empty")
+	btn.disabled=true
+#	btn2.visible=false
+	
+	pass # Replace with function body.

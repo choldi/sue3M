@@ -10,6 +10,7 @@ var start_minutes:int
 var start_seconds:int
 var config_file:String
 var score_file:String
+var status_file:String
 var vol_mixer:float
 var vol_music:float
 var vol_sfx:float
@@ -36,6 +37,7 @@ func _ready():
 	start_seconds=0
 	score_file="user://scoresave.cfg"
 	config_file="user://sue3m.cfg"
+	status_file="user://status.cfg"
 	num_bonus_seconds=10
 	min_piece_for_bonus=6
 	min_piece_extra_bonus=9
