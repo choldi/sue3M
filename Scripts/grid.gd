@@ -123,6 +123,7 @@ func start():
 func continue_game():
 	all_pieces=make_2d_array()	
 	all_matches=make_2d_array()
+	get_parent().get_node("bottom_ui/MarginContainer/HBoxContainer/toggle_pause").show()
 	pause_timer=false
 	state=move
 	end_game=false
@@ -638,12 +639,13 @@ func touch_input():
 			if destroy_button:
 				var col_destroy=all_pieces[pos.x][pos.y].color
 				destroy_pieces_color(col_destroy)
-				pause_timer=true
 				destroy_button=false
 				var btn=get_parent().get_node("bottom_ui/MarginContainer/HBoxContainer/btn_destroy")
-#	var btn2=get_parent().get_node("bottom_ui/MarginContainer/HBoxContainer/btn_empty")
+				var btn2=get_parent().get_node("bottom_ui/MarginContainer/HBoxContainer/btn_empty")
+				btn2.visible=true
 				btn.disabled=false
 				btn.visible=false
+				pause_timer=true
 				emit_signal("pause_timer_collapse",pause_timer)
 				get_parent().get_node("collapse_timer").start()				
 			else:
@@ -729,7 +731,7 @@ func _on_destroy_timer_timeout():
 			add_child(lbl_timer)
 			pos=grid_to_pixel(3,10)
 			lbl_timer.move_up(pos,Color.INDIGO,"+" + str(GlobalVars.num_bonus_extra_seconds) + " s")
-		if pieces_removed==4:
+		if pieces_removed>=4:
 			var pieces=collection[i]
 			var is_line_col=true
 			var is_line_row=true
@@ -994,7 +996,12 @@ func save_status():
 			var piece_type = piece_types[piece_name.color]
 			var sname2=sname.format({"i":i,"j":j})
 			config.set_value("PIECES",sname2,color)
-				
+	var btn=get_parent().get_node("bottom_ui/MarginContainer/HBoxContainer/btn_destroy")
+	if btn.visible:
+		config.set_value("VALUES","DESTROY_BUTTON",1)
+	else:
+		config.set_value("VALUES","DESTROY_BUTTON",0)
+		
 	config.save(fname)
 	
 func load_status():
@@ -1016,7 +1023,7 @@ func _on_load_status_timer_timeout():
 		var smov=config.get_value("VALUES","MOVES")
 		var sscor=config.get_value("VALUES","SCORE")
 		top_ui.set_time(stime)
-		top_ui.set_score(sscor)
+		top_ui.set_score(smov)
 		prebottom_ui.text=sscor
 		var sname="PIECE{i},{j}"
 		var load_array=make_2d_array()
@@ -1027,6 +1034,13 @@ func _on_load_status_timer_timeout():
 				load_array[i][j]=color
 		destroy_pieces()
 		draw_pieces(load_array)
+		var ball=config.get_value("VALUES","DESTROY_BUTTON")
+		var btn=get_parent().get_node("bottom_ui/MarginContainer/HBoxContainer/btn_destroy")
+		if ball==1:
+			btn.visible=true
+		else:
+			btn.visible=false
+
 	DirAccess.remove_absolute(fname)
 	pass # Replace with function body.
 
