@@ -11,6 +11,8 @@ var y_start
 var offset
 var y_offset
 
+var magic_seq=0
+
 #pieces in board
 var all_pieces=[]
 
@@ -661,7 +663,19 @@ func touch_input():
 							pixel_to_grid(final_touch.x,final_touch.y))			
 			print("swipe")
 		controlling=false
-		
+		var p=pixel_to_grid(first_touch.x,first_touch.y)
+		if p.x==0 && p.y==0:
+			magic_seq=1
+		if magic_seq==1 && p.x==1 && p.y==1:
+			magic_seq=2
+		if magic_seq==2 && p.x==2 && p.y==2:
+			magic_seq=3
+		if magic_seq==3:
+			emit_signal("reset_score")
+			emit_signal("display_hi_score",0)
+			emit_signal("display_hi_pieces",0)
+			magic_seq=0
+
 #	if Input.is_action_just_released("ui_mouse_right"):
 #		spawn_pieces()
 #	if Input.is_action_just_released("ui_mouse_middle"):
@@ -1060,3 +1074,9 @@ func _on_btn_destroy_pressed() -> void:
 #	btn2.visible=false
 	
 	pass # Replace with function body.
+
+func reset_score_1():
+	var top_ui = get_parent().get_node("top_ui")
+	var prebottom_ui = get_parent().get_node("prebottom_ui/MarginContainer/lblscore")		
+	top_ui.set_score("0000000")
+	prebottom_ui.text="0000000"
